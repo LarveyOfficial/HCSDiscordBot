@@ -12,10 +12,14 @@ print('Complete Bot Operational')
 @bot.command()
 async def shutdown(ctx):
     if ctx.author.id in [245653078794174465]:
-        await ctx.send(":wave:")
+        print(ctx.author.name + ' (' + str(ctx.author.id) + ')' + ' has requested a shutdown.')
+        print('Shutting down')
+        await ctx.send(":wave::wave:")
         await bot.change_presence(status='offline')
         await bot.logout()
-
+    else:
+        print(ctx.author.name + ' (' + str(ctx.author.id) + ')' + ' has requested a shutdown.')
+        print('But they do not have enough permissions')
 
 
 
