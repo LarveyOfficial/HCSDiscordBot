@@ -28,24 +28,30 @@ async def joinmsg(member):
 
 async def playerjoin(member):
     print('New player joined... Making Setup Room')
-    name = str(member.id)
     overwrites = {
         member.guild.default_role: discord.PermissionOverwrite(read_messages=False),
         member: discord.PermissionOverwrite(read_messages=True),
         bot.user: discord.PermissionOverwrite(read_messages=True)
     }
+
     category = discord.utils.get(member.guild.categories, name="Setup")
     if not category:
         await member.guild.create_category_channel(name='Setup')
         category = discord.utils.get(member.guild.categories, name="Setup")
 
-    channel = await member.guild.create_text_channel(name, overwrites=overwrites, category=category)
+    channel = await member.guild.create_text_channel(str(member.id), overwrites=overwrites, category=category)
     print("Creating new setup for " + str(member) + ".")
     await channel.send("Welcome " + str(member) + " to the HCS Discord Server!")
     await channel.send("Lets Start the Setup!")
     msg = await channel.send("Are you from the Highschool, or the Middleschool? React Acordingly")
-    await msg.add_reaction("🇭")
-    await msg.add_reaction("🇲")
+    high_ = await msg.add_reaction("🇭")
+    middle_ = await msg.add_reaction("🇲")
+
+    reaction = await bot.wait_for_reaction(['🇭', '🇲'], msg)
+    if reaction.me==False and reaction.emoji==':regional_indicator_m:':
+        await channel.send("yay you are from the middle school. kid.")
+    elif reaction.me==False and reaction.emoji==':regional_indicator_m:':
+        await channel.send("lol ur big boi from high schoolio.")
 
 
 @bot.command()
