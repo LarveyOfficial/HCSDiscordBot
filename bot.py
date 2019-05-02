@@ -3,7 +3,7 @@ import discord
 
 bot = commands.Bot(command_prefix='$', case_insensitive=True)
 prefix = "$"
-version = "0.0.1"
+version = "0.0.2"
 TOKEN = 'NTY1MzUzMzU1Njc4MDU2NDQ4.XMmJcQ.wnBjUGE_AT9NjxJ-QWVbQbRcQTE'
 bot.remove_command('help')
 print("Loading....")
