@@ -32,15 +32,26 @@ async def playerjoin(member):
         member: discord.PermissionOverwrite(read_messages=True),
         bot.user: discord.PermissionOverwrite(read_messages=True)
     }
-    category = discord.utils.get(member.guild.categories, name="Setup", overwrites=overwrites)
+    category = discord.utils.get(member.guild.categories, name="Setup")
     if not category:
-        await member.guild.create_category_channel(name='Setup', overwrites=overwrites)
-        category = discord.utils.get(member.guild.categories, name="Setup", overwrites=overwrites)
+        await member.guild.create_category_channel(name='Setup')
+        category = discord.utils.get(member.guild.categories, name="Setup")
 
     channel = await member.guild.create_text_channel(name, overwrites=overwrites, category=category)
     print("Creating new setup for " + str(member) + ".")
     await channel.send("Welcome " + str(member) + " to the HCS Discord Server!")
-    await channel.send("Would you like to start you setup? (Yes/No)")
+    await channel.send("Lets Start the Setup!")
+    msg = await channel.send("Are you from the Highschool, or the Middleschool? React Acordingly")
+    await msg.add_reaction("🇭")
+    await msg.add_reaction("🇲")
+    
+
+@bot.event
+async def on_member_leave(member):
+    global overwrites
+    global category
+    name = str(member.id)
+    await member.delete(name, overwrites=overwrites, category=category)
 
 @bot.command()
 async def shutdown(ctx):
