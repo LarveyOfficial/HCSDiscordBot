@@ -14,7 +14,7 @@ if __name__== '__main__':
 @bot.event
 async def on_ready():
     guilds = list(bot.guilds)
-    print("Connected on " + str(len(bot.guilds)) + " servers:")
+    print("Connected to " + str(len(bot.guilds)) + " server(s):")
     for x in range(len(guilds)):
         print('  ' + guilds[x-1].name)
 
@@ -23,6 +23,22 @@ async def joinmsg(member):
     embed = discord.Embed(title="Member Joined", description=member.name, color=0x1394ff)
     await welcome.send(embed=embed)
 
+
+async def playerjoin(ctx):
+    print('New player joined... Making Setup Room')
+    overwrites = {
+        ctx.guild.default_role: discord.PermissionOverwrite(read_messages=False),
+        ctx.author: discord.PermissionOverwrite(read_messages=True),
+        bot.user: discord.PermissionOverwrite(read_messages=True)
+    }
+    category = discord.utils.get(ctx.guild.categories, name="Setup")
+    if not category:
+        await ctx.guild.create_category_channel(name='Setup')
+        category = discord.utils.get(ctx.guild.categories, name="Setup")
+
+    channel = await ctx.guild.create_text_channel(name, overwrites=overwrites, category=category)
+    print("Creating New Setup")
+    await channel.send("Hello World")
 
 @bot.command()
 async def shutdown(ctx):
@@ -39,6 +55,7 @@ async def shutdown(ctx):
 @bot.event
 async def on_member_join(member):
     await joinmsg(member)
+    await playerjoin()
 
 
 bot.run(config.TOKEN)
