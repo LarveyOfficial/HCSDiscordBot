@@ -11,6 +11,7 @@ owner_ids=[245653078794174465]
 
 if __name__== '__main__':
     import config
+    
 
 @bot.event
 async def on_ready():
@@ -45,13 +46,6 @@ async def playerjoin(member):
     msg = await channel.send("Are you from the Highschool, or the Middleschool? React Acordingly")
     await msg.add_reaction("🇭")
     await msg.add_reaction("🇲")
-    time.sleep(1)
-    def check(reaction, user):
-        return user == message.author and str(reaction.emoji) == '🇭'
-    try:
-        reaction, user = await bot.wait_for('reaction_add', check=check)
-    finally:
-        await channel.send("Highschool.")
 
 @bot.event
 async def on_member_leave(member):
