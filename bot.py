@@ -9,6 +9,13 @@ bot.remove_command('help')
 print("Loading....")
 owner_ids=[245653078794174465]
 print('Complete Bot Operational')
+
+async def joinmsg(member):
+    welcome = discord.utils.get(member.guild.channels, id=int(573171504234233888))
+    embed = discord.Embed(title="Member Joined", description=member.name, color=0x1394ff)
+    await welcome.send(embed=embed)
+
+
 @bot.command()
 async def shutdown(ctx):
     if ctx.author.id in [245653078794174465]:
@@ -20,6 +27,12 @@ async def shutdown(ctx):
     else:
         print(ctx.author.name + ' (' + str(ctx.author.id) + ')' + ' has requested a shutdown.')
         print('But they do not have enough permissions')
+
+@bot.event
+async def on_member_join(member):
+    await joinmsg(member)
+
+
 
 
 
