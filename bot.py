@@ -41,7 +41,4 @@ async def on_member_join(member):
     await joinmsg(member)
 
 
-
-
-
 bot.run(config.TOKEN)
