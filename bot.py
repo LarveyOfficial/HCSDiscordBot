@@ -7,11 +7,16 @@ version = "0.0.2"
 bot.remove_command('help')
 print("Loading....")
 owner_ids=[245653078794174465]
-print('HCS Bot Initiated')
 
 if __name__== '__main__':
     import config
 
+@bot.event
+async def on_ready():
+    guilds = list(bot.guilds)
+    print("Connected on " + str(len(bot.guilds)) + " servers:")
+    for x in range(len(guilds)):
+        print('  ' + guilds[x-1].name)
 
 async def joinmsg(member):
     welcome = discord.utils.get(member.guild.channels, id=int(573171504234233888))
