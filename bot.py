@@ -7,7 +7,7 @@ version = "0.0.2"
 bot.remove_command('help')
 print("Loading....")
 owner_ids=[245653078794174465]
-print('Complete Bot Operational')
+print('HCS Bot Initiated')
 
 if __name__== '__main__':
     import config
