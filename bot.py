@@ -34,12 +34,13 @@ async def playerjoin(member):
     }
     category = discord.utils.get(member.guild.categories, name="Setup", overwrites=overwrites)
     if not category:
-        await member.guild.create_category_channel(name='Setup')
-        category = discord.utils.get(member.guild.categories, name="Setup")
+        await member.guild.create_category_channel(name='Setup', overwrites=overwrites)
+        category = discord.utils.get(member.guild.categories, name="Setup", overwrites=overwrites)
 
     channel = await member.guild.create_text_channel(name, overwrites=overwrites, category=category)
-    print("Creating new setup for " + member + ".")
-    await channel.send("Welcome " + member + " to the HCS Discord Server!")
+    print("Creating new setup for " + str(member) + ".")
+    await channel.send("Welcome " + str(member) + " to the HCS Discord Server!")
+    await channel.send("Would you like to start you setup? (Yes/No)")
 
 @bot.command()
 async def shutdown(ctx):
