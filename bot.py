@@ -11,7 +11,7 @@ owner_ids=[245653078794174465]
 
 if __name__== '__main__':
     import config
-    
+
 
 @bot.event
 async def on_ready():
@@ -47,12 +47,6 @@ async def playerjoin(member):
     await msg.add_reaction("🇭")
     await msg.add_reaction("🇲")
 
-@bot.event
-async def on_member_leave(member):
-    global overwrites
-    global category
-    name = str(member.id)
-    await member.delete(name, overwrites=overwrites, category=category)
 
 @bot.command()
 async def shutdown(ctx):
