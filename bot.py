@@ -4,11 +4,14 @@ import discord
 bot = commands.Bot(command_prefix='$', case_insensitive=True)
 prefix = "$"
 version = "0.0.2"
-TOKEN = 'NTY1MzUzMzU1Njc4MDU2NDQ4.XMmJcQ.wnBjUGE_AT9NjxJ-QWVbQbRcQTE'
 bot.remove_command('help')
 print("Loading....")
 owner_ids=[245653078794174465]
 print('Complete Bot Operational')
+
+if __name__== '__main__':
+    import config
+
 
 async def joinmsg(member):
     welcome = discord.utils.get(member.guild.channels, id=int(573171504234233888))
@@ -36,4 +39,4 @@ async def on_member_join(member):
 
 
 
-bot.run(TOKEN)
+bot.run(config.TOKEN)
