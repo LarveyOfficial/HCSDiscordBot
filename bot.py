@@ -3,7 +3,7 @@ import discord
 
 bot = commands.Bot(command_prefix='$', case_insensitive=True)
 prefix = "$"
-version = "0.0.5"
+version = "0.0.6"
 bot.remove_command('help')
 print("Loading....")
 owner_ids=[245653078794174465]
@@ -44,7 +44,7 @@ async def playerjoin(member):
     msg = await channel.send("Are you from the Highschool, or the Middleschool? React Acordingly")
     await msg.add_reaction("🇭")
     await msg.add_reaction("🇲")
-    
+
 
 @bot.event
 async def on_member_leave(member):
