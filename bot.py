@@ -24,19 +24,20 @@ async def joinmsg(member):
     await welcome.send(embed=embed)
 
 
-async def playerjoin(ctx):
+async def playerjoin(member):
     print('New player joined... Making Setup Room')
+    name = str(member.id)
     overwrites = {
-        ctx.guild.default_role: discord.PermissionOverwrite(read_messages=False),
-        ctx.author: discord.PermissionOverwrite(read_messages=True),
+        member.guild.default_role: discord.PermissionOverwrite(read_messages=False),
+        member: discord.PermissionOverwrite(read_messages=True),
         bot.user: discord.PermissionOverwrite(read_messages=True)
     }
-    category = discord.utils.get(ctx.guild.categories, name="Setup")
+    category = discord.utils.get(member.guild.categories, name="Setup", overwrites=overwrites)
     if not category:
-        await ctx.guild.create_category_channel(name='Setup')
-        category = discord.utils.get(ctx.guild.categories, name="Setup")
+        await member.guild.create_category_channel(name='Setup')
+        category = discord.utils.get(member.guild.categories, name="Setup")
 
-    channel = await ctx.guild.create_text_channel(name, overwrites=overwrites, category=category)
+    channel = await member.guild.create_text_channel(name, overwrites=overwrites, category=category)
     print("Creating New Setup")
     await channel.send("Hello World")
 
@@ -55,7 +56,10 @@ async def shutdown(ctx):
 @bot.event
 async def on_member_join(member):
     await joinmsg(member)
-    await playerjoin()
+
+@bot.event
+async def on_member_join(member):
+    await playerjoin(member)
 
 
 bot.run(config.TOKEN)
