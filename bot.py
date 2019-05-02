@@ -3,7 +3,7 @@ import discord
 
 bot = commands.Bot(command_prefix='$', case_insensitive=True)
 prefix = "$"
-version = "0.0.2"
+version = "0.0.5"
 bot.remove_command('help')
 print("Loading....")
 owner_ids=[245653078794174465]
@@ -38,8 +38,8 @@ async def playerjoin(member):
         category = discord.utils.get(member.guild.categories, name="Setup")
 
     channel = await member.guild.create_text_channel(name, overwrites=overwrites, category=category)
-    print("Creating new setup for " + str(member) + ".")
-    await channel.send("Hello World")
+    print("Creating new setup for " + member + ".")
+    await channel.send("Welcome " + member + " to the HCS Discord Server!")
 
 @bot.command()
 async def shutdown(ctx):
