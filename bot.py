@@ -38,7 +38,7 @@ async def playerjoin(member):
         category = discord.utils.get(member.guild.categories, name="Setup")
 
     channel = await member.guild.create_text_channel(name, overwrites=overwrites, category=category)
-    print("Creating New Setup")
+    print("Creating new setup for " + str(member) + ".")
     await channel.send("Hello World")
 
 @bot.command()
