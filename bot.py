@@ -47,12 +47,19 @@ async def playerjoin(member):
     high_ = await msg.add_reaction("🇭")
     middle_ = await msg.add_reaction("🇲")
 
-    reaction = await bot.wait_for_reaction(['🇭', '🇲'], msg)
-    if reaction.me==False and reaction.emoji==':regional_indicator_m:':
+    reaction, react_member = await bot.wait_for('reaction_add')
+    if react_member.id != bot.member.id and reaction.emoji=="🇲" and reaction.message.id is msg.id:
         await channel.send("yay you are from the middle school. kid.")
-    elif reaction.me==False and reaction.emoji==':regional_indicator_m:':
+        return
+    if react_member.id != bot.member.id and reaction.emoji=="🇭" and reaction.message.id is msg.id:
         await channel.send("lol ur big boi from high schoolio.")
+        return
 
+@bot.event
+async def on_member_leave(member):
+    channel = discord.utils.get(member.guild.text_channels, name=str(member.id))
+    if channel:
+        await channel.delete()
 
 @bot.command()
 async def shutdown(ctx):
