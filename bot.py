@@ -57,6 +57,7 @@ async def playerjoin(member):
                 else:
                     if reaction.emoji == "🇭":
                         await channel.send('Highschool')
+                        break
                     else:
                         continue
             else:
@@ -64,7 +65,8 @@ async def playerjoin(member):
 
 
 @bot.event
-async def on_member_leave(member):
+async def on_member_remove(member):
+    print(member.id)
     channel = discord.utils.get(member.guild.text_channels, name=str(member.id))
     if channel:
         await channel.delete()
