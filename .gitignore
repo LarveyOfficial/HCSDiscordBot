@@ -8,3 +8,4 @@ run.bat
 .idea/modules.xml
 .idea/misc.xml
 .idea/HCSDiscordBot.iml
+venv
