@@ -2,6 +2,7 @@ from discord.ext import commands
 import discord
 import time
 import asyncio
+import pymongo
 
 bot = commands.Bot(command_prefix='$', case_insensitive=True)
 prefix = "$"
