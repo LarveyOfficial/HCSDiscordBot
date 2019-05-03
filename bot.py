@@ -89,8 +89,8 @@ async def shutdown(ctx):
 async def giverole(member):
     roleid = 573953106417680409
     role = discord.utils.get(member.guild.roles, id=roleid)
-    print(member.name + "(" + str(member.id) + ") " + "has Joined the discord adding them to the role: " + role)
     await member.add_roles(role)
+    print(member.name + "(" + str(member.id) + ") " + "has Joined the discord adding them to the role: " + str(role))
 
 @bot.event
 async def on_member_join(member):
