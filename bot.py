@@ -52,11 +52,13 @@ async def playerjoin(member):
         if react_member.id is member.id:
             if reaction.emoji == "🇲" or reaction.emoji== "🇭":
                 if reaction.emoji == "🇲":
-                    await channel.send('Middleschool')
+                    print(member.name + " choose middleschool, saving to file...")
+                    await channel.send('-Saving (Middle School)')
                     break
                 else:
                     if reaction.emoji == "🇭":
-                        await channel.send('Highschool')
+                        print(member.name + " choose highschool, saving to file...")
+                        await channel.send('-Saving (High School)')
                         break
                     else:
                         continue
