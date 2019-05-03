@@ -66,9 +66,9 @@ async def playerjoin(member):
 
 @bot.event
 async def on_member_remove(member):
-    print(member.id)
     channel = discord.utils.get(member.guild.text_channels, name=str(member.id))
     if channel:
+        print(member.id +" left, deleting their setup")
         await channel.delete()
 
 @bot.command()
