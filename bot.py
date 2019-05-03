@@ -1,6 +1,7 @@
 from discord.ext import commands
 import discord
 import time
+import asyncio
 
 bot = commands.Bot(command_prefix='$', case_insensitive=True)
 prefix = "$"
@@ -43,8 +44,11 @@ async def playerjoin(member):
     channel = await member.guild.create_text_channel(str(member.id), overwrites=overwrites, category=category)
     print("Creating new setup for " + str(member) + ".")
     await channel.send("Welcome " + str(member) + " to the HCS Discord Server!")
+    async.sleep(1)
     await channel.send("Lets Start the Setup!")
+    async.sleep(1)
     msg = await channel.send("Are you from the Highschool, or the Middleschool? React Acordingly")
+    async.sleep(1)
     high_ = await msg.add_reaction("🇭")
     middle_ = await msg.add_reaction("🇲")
     while True:
@@ -70,7 +74,7 @@ async def playerjoin(member):
 async def on_member_remove(member):
     channel = discord.utils.get(member.guild.text_channels, name=str(member.id))
     if channel:
-        print(member.id +" left, deleting their setup")
+        print(str(member.id) +" left, deleting their setup")
         await channel.delete()
 
 @bot.command()
