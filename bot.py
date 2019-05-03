@@ -65,12 +65,7 @@ async def playerjoin(member):
 
 @bot.event
 async def on_member_leave(member):
-    overwrites = {
-        member.guild.default_role: discord.PermissionOverwrite(read_messages=False),
-        member: discord.PermissionOverwrite(read_messages=True),
-        bot.user: discord.PermissionOverwrite(read_messages=True)
-    }
-    channel = discord.utils.get(member.guild.text_channels, str(member.id), overwrites=overwrites)
+    channel = discord.utils.get(member.guild.text_channels, name=str(member.id))
     if channel:
         await channel.delete()
 
