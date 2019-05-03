@@ -4,7 +4,7 @@ import time
 
 bot = commands.Bot(command_prefix='$', case_insensitive=True)
 prefix = "$"
-version = "0.0.6"
+version = "Alpha 0.1.0"
 bot.remove_command('help')
 print("Loading....")
 owner_ids=[245653078794174465]
@@ -16,6 +16,7 @@ if __name__== '__main__':
 @bot.event
 async def on_ready():
     guilds = list(bot.guilds)
+    print("HCS Discord Bot "+version)
     print("Connected to " + str(len(bot.guilds)) + " server(s):")
     for x in range(len(guilds)):
         print('  ' + guilds[x-1].name)
@@ -46,18 +47,30 @@ async def playerjoin(member):
     msg = await channel.send("Are you from the Highschool, or the Middleschool? React Acordingly")
     high_ = await msg.add_reaction("🇭")
     middle_ = await msg.add_reaction("🇲")
+    while True:
+        reaction, react_member = await bot.wait_for('reaction_add')
+        if react_member.id is member.id:
+            if reaction.emoji == "🇲" or reaction.emoji== "🇭":
+                if reaction.emoji == "🇲":
+                    await channel.send('Middleschool')
+                    break
+                else:
+                    if reaction.emoji == "🇭":
+                        await channel.send('Highschool')
+                    else:
+                        continue
+            else:
+                continue
 
-    reaction, react_member = await bot.wait_for('reaction_add')
-    if react_member.id != bot.member.id and reaction.emoji=="🇲" and reaction.message.id is msg.id:
-        await channel.send("yay you are from the middle school. kid.")
-        return
-    if react_member.id != bot.member.id and reaction.emoji=="🇭" and reaction.message.id is msg.id:
-        await channel.send("lol ur big boi from high schoolio.")
-        return
 
 @bot.event
 async def on_member_leave(member):
-    channel = discord.utils.get(member.guild.text_channels, name=str(member.id))
+    overwrites = {
+        member.guild.default_role: discord.PermissionOverwrite(read_messages=False),
+        member: discord.PermissionOverwrite(read_messages=True),
+        bot.user: discord.PermissionOverwrite(read_messages=True)
+    }
+    channel = discord.utils.get(member.guild.text_channels, str(member.id), overwrites=overwrites)
     if channel:
         await channel.delete()
 
