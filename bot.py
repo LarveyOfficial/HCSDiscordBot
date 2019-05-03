@@ -127,6 +127,7 @@ async def on_member_remove(member):
 
     channel = discord.utils.get(member.guild.text_channels, name=str(member.id))
     if channel:
+        
         print(str(member.id) +" left, deleting their setup")
         await channel.delete()
 
