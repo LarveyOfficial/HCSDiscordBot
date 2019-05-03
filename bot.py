@@ -1,18 +1,25 @@
 from discord.ext import commands
-import discord
-import time
-import asyncio
-import pymongo
+import discord, time, asyncio, pymongo, doc_maker
+if __name__ == '__main__':
+    import config
+
 
 bot = commands.Bot(command_prefix='$', case_insensitive=True)
-prefix = "$"
 version = "Alpha 0.1.0"
 bot.remove_command('help')
 print("Loading....")
 owner_ids=[245653078794174465]
 
-if __name__== '__main__':
-    import config
+
+def make_doc(user_name, user_id, code=None, grade=None, ):
+    doc_ = {'user_name': user_name, 'user_id': str(user_id), 'code': code, 'grade': grade, ''}  # 'code' == None if verified
+    return doc_
+
+# lol don't touch this
+mongo_db = pymongo.MongoClient("mongodb://%s:%s@%s:%s/" % (config.username, config.password, config.host, config.port))
+hcs_db = mongo_db['db']
+user_col = hcs_db['users']
+
 
 
 @bot.event
@@ -44,14 +51,11 @@ async def playerjoin(member):
 
     channel = await member.guild.create_text_channel(str(member.id), overwrites=overwrites, category=category)
     print("Creating new setup for " + str(member) + ".")
-    await channel.send("Welcome " + str(member) + " to the HCS Discord Server!")
-    await asyncio.sleep(1)
-    await channel.send("Lets Start the Setup!")
-    await asyncio.sleep(1)
-    msg = await channel.send("Are you from the Highschool, or the Middleschool? React Acordingly")
-    await asyncio.sleep(1)
-    high_ = await msg.add_reaction("🇭")
-    middle_ = await msg.add_reaction("🇲")
+    
+    msg = await channel.send("Welcome " + str(member) + " to the HCS Discord Server!\nLets Start the Setup!\nAre you from the Highschool, or the Middleschool? React Acordingly")
+    await msg.add_reaction("🇭")
+    await msg.add_reaction("🇲")
+
     while True:
         reaction, react_member = await bot.wait_for('reaction_add')
         if react_member.id is member.id:
@@ -59,6 +63,7 @@ async def playerjoin(member):
                 if reaction.emoji == "🇲":
                     print(member.name + " choose middleschool, saving to file...")
                     await channel.send('-Saving (Middle School)')
+                    user_col.insert_one(make_doc())
                     break
                 elif reaction.emoji == "🇭":
                     print(member.name + " choose highschool, saving to file...")
