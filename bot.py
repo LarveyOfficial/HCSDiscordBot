@@ -59,15 +59,12 @@ async def playerjoin(member):
                     print(member.name + " choose middleschool, saving to file...")
                     await channel.send('-Saving (Middle School)')
                     break
+                elif reaction.emoji == "🇭":
+                    print(member.name + " choose highschool, saving to file...")
+                    await channel.send('-Saving (High School)')
+                    break
                 else:
-                    if reaction.emoji == "🇭":
-                        print(member.name + " choose highschool, saving to file...")
-                        await channel.send('-Saving (High School)')
-                        break
-                    else:
-                        continue
-            else:
-                continue
+                    continue
 
 
 @bot.event
