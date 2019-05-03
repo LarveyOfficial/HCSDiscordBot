@@ -3,3 +3,8 @@
 config.py
 __pycache__/config.cpython-37.pyc
 run.bat
+.idea/workspace.xml
+.idea/vcs.xml
+.idea/modules.xml
+.idea/misc.xml
+.idea/HCSDiscordBot.iml
