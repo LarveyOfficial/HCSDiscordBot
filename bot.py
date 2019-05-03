@@ -44,11 +44,11 @@ async def playerjoin(member):
     channel = await member.guild.create_text_channel(str(member.id), overwrites=overwrites, category=category)
     print("Creating new setup for " + str(member) + ".")
     await channel.send("Welcome " + str(member) + " to the HCS Discord Server!")
-    asyncio.sleep(1)
+    await asyncio.sleep(1)
     await channel.send("Lets Start the Setup!")
-    asyncio.sleep(1)
+    await asyncio.sleep(1)
     msg = await channel.send("Are you from the Highschool, or the Middleschool? React Acordingly")
-    asyncio.sleep(1)
+    await asyncio.sleep(1)
     high_ = await msg.add_reaction("🇭")
     middle_ = await msg.add_reaction("🇲")
     while True:
@@ -86,13 +86,17 @@ async def shutdown(ctx):
         print(ctx.author.name + ' (' + str(ctx.author.id) + ')' + ' has requested a shutdown.')
         print('But they do not have enough permissions')
 
-@bot.event
-async def on_member_join(member):
-    await joinmsg(member)
+async def giverole(member):
+    roleid = 573953106417680409
+    role = discord.utils.get(member.guild.roles, id=roleid)
+    print(member.name + "(" + str(member.id) + ") " + "has Joined the discord adding them to the role: " + role)
+    await member.add_roles(role)
 
 @bot.event
 async def on_member_join(member):
+    if member.id==bot.user.id:
+        return
+    await giverole(member)
     await playerjoin(member)
-
 
 bot.run(config.TOKEN)
