@@ -104,7 +104,7 @@ async def playerjoin(member):
                 print(member.name + " choose highschool, saving to file...")
                 await channel.send('-Saving (High School)')
 
-                msg2 = await channel.send("Whats your grade?\nA: Freshmen\nB: Sophmore\nC: Junior\nD: Senior")
+                msg2 = await channel.send("Whats your grade?\n\nA: Freshmen\nB: SophmoreC: Junior\nD: Senior")
                 await msg2.add_reaction("🇦")
                 await msg2.add_reaction("🇧")
                 await msg2.add_reaction("🇨")
