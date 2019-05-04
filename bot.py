@@ -1,5 +1,5 @@
 from discord.ext import commands
-import discord, time, asyncio, pymongo, doc_maker
+import discord, time, asyncio, pymongo, string
 if __name__ == '__main__':
     import config
 
@@ -11,7 +11,6 @@ print("Loading....")
 owner_ids=[245653078794174465]
 
 # lol don't touch this
-mongo_db = pymongo.MongoClient("mongodb://%s:%s@%s:%s/" % (config.username, config.password, config.host, config.port))
 hcs_db = mongo_db['db']
 user_col = hcs_db['users']
 
