@@ -133,14 +133,19 @@ async def playerjoin(member):
                             gradeselect = "12th"
                             break
                         else:
+                            print("not right emoji")
                             continue
                     else:
+                        print("not right user")
                         continue
 
 
                 their_code=gen_code()
+                print("generated code: "+ str(their_code))
                 if check_for_doc("user_id", str(member.id)):
+                    print("saving...")
                     user_col.insert_one(make_doc(member.name, member.id, their_code, gradeselect, None, None, False))
+                    print("saved.")
 
                     #send code to email?
 
