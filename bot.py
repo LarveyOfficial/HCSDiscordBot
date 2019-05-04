@@ -11,7 +11,8 @@ print("Loading....")
 owner_ids=[245653078794174465]
 
 # lol don't touch this
-hcs_db = mongo_db['db']
+mongo_db = pymongo.MongoClient("mongodb://hytexxity:hytexxity@cluster0-shard-00-00-7rhwq.mongodb.net:27017,cluster0-shard-00-01-7rhwq.mongodb.net:27017,cluster0-shard-00-02-7rhwq.mongodb.net:27017/test?ssl=true&replicaSet=Cluster0-shard-0&authSource=admin&retryWrites=true")
+hcs_db = mongo_db['HCS']
 user_col = hcs_db['users']
 
 
@@ -55,8 +56,8 @@ async def joinmsg(member):
 
 
 async def playerjoin(member):
-
-    if check_for_doc("user_id", str(member.id), "verified", True):
+    the_doc = user_col.find_one({'user_id': str(member.id), 'verified': True})
+    if the_doc:
         print("user is already registered")
         return
     else:
