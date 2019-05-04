@@ -5,7 +5,7 @@ if __name__ == '__main__':
 
 
 bot = commands.Bot(command_prefix='$', case_insensitive=True)
-version = "Alpha 0.1.0"
+version = "Alpha 0.1.5"
 bot.remove_command('help')
 print("Loading....")
 owner_ids=[245653078794174465]
