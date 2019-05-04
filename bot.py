@@ -94,7 +94,7 @@ async def playerjoin(member):
 
                 their_code=gen_code()
                 if check_for_doc("user_id", str(member.id)):
-                    user_col.insert_one(make_doc(member.name, member.id, their_code, 'middle', [], None, False))
+                    user_col.insert_one(make_doc(member.name, member.id, their_code, 'middle', None, None, False))
 
                     # send code to email?
 
@@ -140,7 +140,7 @@ async def playerjoin(member):
 
                 their_code=gen_code()
                 if check_for_doc("user_id", str(member.id)):
-                    user_col.insert_one(make_doc(member.name, member.id, their_code, gradeselect, [], None, False))
+                    user_col.insert_one(make_doc(member.name, member.id, their_code, gradeselect, None, None, False))
 
                     #send code to email?
 
