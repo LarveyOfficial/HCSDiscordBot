@@ -1,5 +1,5 @@
 from discord.ext import commands
-import discord, time, asyncio, pymongo, string
+import discord, time, asyncio, pymongo, string, random
 if __name__ == '__main__':
     import config
 
@@ -104,11 +104,11 @@ async def playerjoin(member):
                 print(member.name + " choose highschool, saving to file...")
                 await channel.send('-Saving (High School)')
 
-                await channel.send("Whats your grade?\nA: Freshmen\nB: Sophmore\nC: Junior\n D: Senior")
-                await msg.add_reaction("🇦")
-                await msg.add_reaction("🇧")
-                await msg.add_reaction("🇨")
-                await msg.add_reaction("🇩")
+                msg2 = await channel.send("Whats your grade?\nA: Freshmen\nB: Sophmore\nC: Junior\nD: Senior")
+                await msg2.add_reaction("🇦")
+                await msg2.add_reaction("🇧")
+                await msg2.add_reaction("🇨")
+                await msg2.add_reaction("🇩")
                 while True:
                     reaction2, react_member2 = await bot.wait_for('reaction_add')
                     if react_member2.id is member.id:
@@ -189,5 +189,5 @@ async def on_member_join(member):
     if member.id==bot.user.id:
         return
     await playerjoin(member)
-
+    await joinmsg(member)
 bot.run(config.TOKEN)
