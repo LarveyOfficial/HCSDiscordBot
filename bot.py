@@ -139,7 +139,7 @@ async def playerjoin(member):
                         print("not right user")
                         continue
 
-                print("generatibng code...")
+                print("generating code...")
                 their_code=gen_code()
                 print("generated code: "+ str(their_code))
                 if check_for_doc("user_id", str(member.id)):
