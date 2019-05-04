@@ -104,12 +104,43 @@ async def playerjoin(member):
                 print(member.name + " choose highschool, saving to file...")
                 await channel.send('-Saving (High School)')
 
-                finish = await channel.send("whats your grade?")
-                
+                await channel.send("Whats your grade?\nA: Freshmen\nB: Sophmore\nC: Junior\n D: Senior")
+                await msg.add_reaction("🇦")
+                await msg.add_reaction("🇧")
+                await msg.add_reaction("🇨")
+                await msg.add_reaction("🇩")
+                while True:
+                    reaction2, react_member2 = await bot.wait_for('reaction_add')
+                    if react_member2.id is member.id:
+                        if reaction2.emoji == "🇦":
+                            print(member.name + " Choose Freshmen... ew")
+                            await channel.send('-Saving (9th Grade)')
+                            gradeselect = "9th"
+                            break
+                        elif reaction2.emoji == "🇧":
+                            print(member.name + " Choose Sophmore")
+                            await channel.send('-Saving (10th Grade)')
+                            gradeselect = "10th"
+                            break
+                        elif reaction2.emoji == "🇨":
+                            print(member.name + " Choose Junior")
+                            await channel.send('-Saving (11th Grade)')
+                            gradeselect = "11th"
+                            break
+                        elif reaction2.emoji == "🇩":
+                            print(member.name + " Choose Senior")
+                            await channel.send('-Saving (12th Grade)')
+                            gradeselect = "12th"
+                            break
+                        else:
+                            continue
+                    else:
+                        continue
+
 
                 their_code=gen_code()
                 if check_for_doc("user_id", str(member.id)):
-                    user_col.insert_one(make_doc(member.name, member.id, their_code, 'middle', [], None, False))
+                    user_col.insert_one(make_doc(member.name, member.id, their_code, gradeselect, [], None, False))
 
                     #send code to email?
 
@@ -127,7 +158,7 @@ async def on_member_remove(member):
 
     channel = discord.utils.get(member.guild.text_channels, name=str(member.id))
     if channel:
-        
+
         print(str(member.id) +" left, deleting their setup")
         await channel.delete()
 
