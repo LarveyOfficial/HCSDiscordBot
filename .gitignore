@@ -9,3 +9,4 @@ run.bat
 .idea/misc.xml
 .idea/HCSDiscordBot.iml
 venv
+__pycache__/config.cpython-36.pyc
