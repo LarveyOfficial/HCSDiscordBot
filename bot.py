@@ -60,8 +60,7 @@ async def joinmsg(member):
 
 
 async def playerjoin(member):
-    the_doc = user_col.find_one({'user_id': str(member.id), 'verified': True})
-    if the_doc:
+    if check_for_doc('user_id', str(member.id), 'verified', True):
         print("user is already registered")
         return
     else:
