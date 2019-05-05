@@ -11,9 +11,9 @@ print("Loading....")
 owner_ids=[245653078794174465]
 
 # lol don't touch this
-mongo_db = pymongo.MongoClient("mongodb://hytexxity:hytexxity@cluster0-shard-00-00-7rhwq.mongodb.net:27017,cluster0-shard-00-01-7rhwq.mongodb.net:27017,cluster0-shard-00-02-7rhwq.mongodb.net:27017/test?ssl=true&replicaSet=Cluster0-shard-0&authSource=admin&retryWrites=true")
-hcs_db = mongo_db['HCS']
-user_col = hcs_db['users']
+client = pymongo.MongoClient(config.uri)
+hcs_db = client.HCS
+user_col = hcs_db.users
 
 
 def make_doc(user_name=None, user_id=None, code=None, grade=None, roles=None, student_id=None, verified=False):
