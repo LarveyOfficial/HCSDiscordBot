@@ -29,14 +29,18 @@ def check_for_doc(check_key, check_val, check_key2=None, check_val2=None):
     if not check_key2 or not check_val2:
         the_doc = user_col.find_one({check_key: check_val})
         if the_doc:
+            print("the_doc=true")
             return True
         else:
+            print("the_doc=false")
             return False
     else:
         the_doc = user_col.find_one({check_key: check_val, check_key2: check_val2})
         if the_doc:
+            print("the_doc=True")
             return True
         else:
+            print("the_doc=False")
             return False
 
 
@@ -93,7 +97,7 @@ async def playerjoin(member):
 
 
                 their_code=gen_code()
-                if check_for_doc("user_id", str(member.id)):
+                if not check_for_doc("user_id", str(member.id)):
                     user_col.insert_one(make_doc(member.name, member.id, their_code, 'middle', None, None, False))
 
                     # send code to email?
@@ -142,7 +146,7 @@ async def playerjoin(member):
                 print("generating code...")
                 their_code=gen_code()
                 print("generated code: "+ str(their_code))
-                if check_for_doc("user_id", str(member.id)):
+                if not check_for_doc("user_id", str(member.id)):
                     print("saving...")
                     user_col.insert_one(make_doc(member.name, member.id, their_code, gradeselect, None, None, False))
                     print("saved.")
