@@ -8,12 +8,14 @@ bot = commands.Bot(command_prefix='$', case_insensitive=True)
 version = "Alpha 0.1.5"
 bot.remove_command('help')
 print("Loading....")
-owner_ids=[245653078794174465]
+owner_ids=[245653078794174465, 282565295351136256]
 
 # lol don't touch this
 client = pymongo.MongoClient(config.uri)
+print("authenticated with mongo database")
 hcs_db = client.HCS
 user_col = hcs_db.users
+print('collected documents (' + str(user_col.find({}).count()) + ")")
 
 
 def make_doc(user_name=None, user_id=None, code=None, grade=None, roles=None, student_id=None, verified=False):
@@ -29,28 +31,117 @@ def check_for_doc(check_key, check_val, check_key2=None, check_val2=None):
     if not check_key2 or not check_val2:
         the_doc = user_col.find_one({check_key: check_val})
         if the_doc:
-            print("the_doc=true")
             return True
         else:
-            print("the_doc=false")
             return False
     else:
         the_doc = user_col.find_one({check_key: check_val, check_key2: check_val2})
         if the_doc:
-            print("the_doc=True")
             return True
         else:
-            print("the_doc=False")
             return False
+
+
+@bot.command()
+async def purge_all(ctx):
+    msg = await ctx.send('checking user...')
+    if ctx.author.id in owner_ids:
+        print('owner requested purge of database')
+        print('purging...')
+        await msg.edit(content='purging...')
+        user_col.delete_many({})
+        await msg.edit(content='database purged!')
+        print('database purged')
+        return
+    else:
+        print('user requested purge of database: '+ctx.author.name+'\nbut was denied.')
+        await msg.edit(content='you can\'t do that lmao')
+        return
 
 
 @bot.event
 async def on_ready():
     guilds = list(bot.guilds)
-    print("HCS Discord Bot "+version)
+    print("bot logged in with version: "+version)
     print("Connected to " + str(len(bot.guilds)) + " server(s):")
-    for x in range(len(guilds)):
-        print('  ' + guilds[x-1].name)
+
+
+async def make_new_channel(member):
+    overwrites = {
+        member.guild.default_role: discord.PermissionOverwrite(read_messages=False),
+        member: discord.PermissionOverwrite(read_messages=True),
+        bot.user: discord.PermissionOverwrite(read_messages=True)
+    }
+
+    category = discord.utils.get(member.guild.categories, name="Setup")
+    if not category:
+        await member.guild.create_category_channel(name='Setup')
+        category = discord.utils.get(member.guild.categories, name="Setup")
+
+    channel = await member.guild.create_text_channel(str(member.id), overwrites=overwrites, category=category)
+    print("Creating new setup for " + str(member) + ".")
+    return channel
+
+
+async def select_middle_school(member, channel):
+    print(member.name + " choose middleschool, saving to file...")
+    await channel.send('-Saving (Middle School)')
+
+    their_code = gen_code()
+    if not check_for_doc("user_id", str(member.id)):
+        user_col.insert_one(make_doc(member.name, member.id, their_code, 'middle', None, None, False))
+
+        # send code to email?
+
+
+async def select_high_school(member, channel):
+    print(member.name + " choose highschool, saving to file...")
+    await channel.send('-Saving (High School)')
+
+    msg2 = await channel.send("Whats your grade?\n\nA: Freshmen\nB: Sophmore\nC: Junior\nD: Senior")
+    await msg2.add_reaction("🇦")
+    await msg2.add_reaction("🇧")
+    await msg2.add_reaction("🇨")
+    await msg2.add_reaction("🇩")
+    while True:
+        reaction2, react_member2 = await bot.wait_for('reaction_add')
+        if react_member2.id is member.id:
+            if reaction2.emoji == "🇦":
+                print(member.name + " Choose Freshmen... ew")
+                await channel.send('-Saving (9th Grade)')
+                gradeselect = "9th"
+                break
+            elif reaction2.emoji == "🇧":
+                print(member.name + " Choose Sophmore")
+                await channel.send('-Saving (10th Grade)')
+                gradeselect = "10th"
+                break
+            elif reaction2.emoji == "🇨":
+                print(member.name + " Choose Junior")
+                await channel.send('-Saving (11th Grade)')
+                gradeselect = "11th"
+                break
+            elif reaction2.emoji == "🇩":
+                print(member.name + " Choose Senior")
+                await channel.send('-Saving (12th Grade)')
+                gradeselect = "12th"
+                break
+            else:
+                print("not right emoji")
+                continue
+        else:
+            print("not right user")
+            continue
+
+    print("generating code...")
+    their_code = gen_code()
+    print("generated code: " + str(their_code))
+    if not check_for_doc("user_id", str(member.id)):
+        print("saving...")
+        user_col.insert_one(make_doc(member.name, member.id, their_code, gradeselect, None, None, False))
+        print("saved.")
+
+        # send code to email?
 
 
 async def joinmsg(member):
@@ -67,19 +158,7 @@ async def playerjoin(member):
         await giverole(member)
 
     print('New player joined... Making Setup Room')
-    overwrites = {
-        member.guild.default_role: discord.PermissionOverwrite(read_messages=False),
-        member: discord.PermissionOverwrite(read_messages=True),
-        bot.user: discord.PermissionOverwrite(read_messages=True)
-    }
-
-    category = discord.utils.get(member.guild.categories, name="Setup")
-    if not category:
-        await member.guild.create_category_channel(name='Setup')
-        category = discord.utils.get(member.guild.categories, name="Setup")
-
-    channel = await member.guild.create_text_channel(str(member.id), overwrites=overwrites, category=category)
-    print("Creating new setup for " + str(member) + ".")
+    channel = await make_new_channel(member)
 
     msg = await channel.send("Welcome " + str(member) + " to the HCS Discord Server!\nLets Start the Setup!\nAre you from the Highschool, or the Middleschool? React Acordingly")
     await msg.add_reaction("🇭")
@@ -89,70 +168,11 @@ async def playerjoin(member):
         reaction, react_member = await bot.wait_for('reaction_add')
         if react_member.id is member.id:
             if reaction.emoji == "🇲":
-                print(member.name + " choose middleschool, saving to file...")
-                await channel.send('-Saving (Middle School)')
-
-
-
-
-                their_code=gen_code()
-                if not check_for_doc("user_id", str(member.id)):
-                    user_col.insert_one(make_doc(member.name, member.id, their_code, 'middle', None, None, False))
-
-                    # send code to email?
-
+                await select_middle_school(member, channel)
                 break
 
             elif reaction.emoji == "🇭":
-                print(member.name + " choose highschool, saving to file...")
-                await channel.send('-Saving (High School)')
-
-                msg2 = await channel.send("Whats your grade?\n\nA: Freshmen\nB: Sophmore\nC: Junior\nD: Senior")
-                await msg2.add_reaction("🇦")
-                await msg2.add_reaction("🇧")
-                await msg2.add_reaction("🇨")
-                await msg2.add_reaction("🇩")
-                while True:
-                    reaction2, react_member2 = await bot.wait_for('reaction_add')
-                    if react_member2.id is member.id:
-                        if reaction2.emoji == "🇦":
-                            print(member.name + " Choose Freshmen... ew")
-                            await channel.send('-Saving (9th Grade)')
-                            gradeselect = "9th"
-                            break
-                        elif reaction2.emoji == "🇧":
-                            print(member.name + " Choose Sophmore")
-                            await channel.send('-Saving (10th Grade)')
-                            gradeselect = "10th"
-                            break
-                        elif reaction2.emoji == "🇨":
-                            print(member.name + " Choose Junior")
-                            await channel.send('-Saving (11th Grade)')
-                            gradeselect = "11th"
-                            break
-                        elif reaction2.emoji == "🇩":
-                            print(member.name + " Choose Senior")
-                            await channel.send('-Saving (12th Grade)')
-                            gradeselect = "12th"
-                            break
-                        else:
-                            print("not right emoji")
-                            continue
-                    else:
-                        print("not right user")
-                        continue
-
-                print("generating code...")
-                their_code=gen_code()
-                print("generated code: "+ str(their_code))
-                if not check_for_doc("user_id", str(member.id)):
-                    print("saving...")
-                    user_col.insert_one(make_doc(member.name, member.id, their_code, gradeselect, None, None, False))
-                    print("saved.")
-
-                    #send code to email?
-
-
+                await select_high_school(member, channel)
                 break
 
             else:
@@ -198,4 +218,6 @@ async def on_member_join(member):
         return
     await playerjoin(member)
     await joinmsg(member)
+
+
 bot.run(config.TOKEN)
