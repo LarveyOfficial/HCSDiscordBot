@@ -24,7 +24,7 @@ print('collected documents (' + str(user_col.count_documents({})) + ")")
 
 
 def sendemail(studentemail, emailcode):
-    body = "Your HCSDiscord Verification Code is \n\n" + str(emailcode)+"\n\nPlease use $verify "+str(emailcode)+ " in your setup channel"
+    body = "Your HCSDiscord Verification Code is \n\n" + str(emailcode)+"\n\nPlease use $verify "+str(emailcode)+ " in your setup channel\n\n" + "If you don't believe this was you please msg Larvey#0001 on Discord."
     emailsubject = "HCSDiscord Authenitcation"
 
     emailmsg = MIMEMultipart()
@@ -193,14 +193,26 @@ async def compare_id(channel, member, student_id):
                     updated_tag = {"$set": {'student_id': str(student_id)}}
                     user_col.update_one({'user_id': str(member.id)}, updated_tag)
                     print('updated user id to be the user id they have so yeah. Now ima send an email. *dabs*')
-                    #send their_doc['code'] to email
                     print('verify using this... $verify '+ their_doc['code'])
                     emailcode = their_doc['code']
                     studentemail = str(student_id)+"@hartlandschools.us"
-                    await last_message.edit(content="Your Student ID was Found! Please check ur email: "+"("+studentemail+")")
-                    print("Email Address is: "+studentemail)
-                    sendemail(studentemail, emailcode)
-                    return True
+                    await last_message.delete()
+                    confirmmsg = await channel.send("We found that Student ID! ("+student_id+") "+"Would you like us to send you an email to confirm it is you?")
+                    await confirmmsg.add_reaction("🇾")
+                    await confirmmsg.add_reaction("🇳")
+                    while True:
+                        reaction3, react_member3 = await bot.wait_for('reaction_add')
+                        if react_member3.id is member.id:
+                            if reaction3.emoji == "🇾":
+                                print(member.name + " has confirmed that "+student_id+" is their student ID. Sending Email.")
+                                print("Email Address is: "+studentemail)
+                                await channel.send("We have sent you an email with a Verifiation Code to "+studentemail)
+                                sendemail(studentemail, emailcode)
+                                return True
+                            if reaction3.emoji == "🇳":
+                                await channel.send("Ok Restarting Student ID question.")
+                                await get_student_id(member, channel)
+
 
         print('No ID Found(Welp.. Thats a Wrap)')
         await channel.send('Sorry, That ID was not Found. Please Try Again')
