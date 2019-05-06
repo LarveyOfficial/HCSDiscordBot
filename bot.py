@@ -24,7 +24,7 @@ print('collected documents (' + str(user_col.count_documents({})) + ")")
 
 
 def sendemail(studentemail, emailcode):
-    body = "Your HCSDiscord Verification Code is \n\n" + str(emailcode)
+    body = "Your HCSDiscord Verification Code is \n\n" + str(emailcode)"\n\n Please use $verify "+str(emailcode)+" in your setup channel"
     emailsubject = "HCSDiscord Authenitcation"
 
     emailmsg = MIMEMultipart()
@@ -161,6 +161,8 @@ async def verify(ctx, code: str=None):
             await ctx.author.send("Yeah Boi U got **Verified**!")
             roleid = 573953106417680409
             role = discord.utils.get(ctx.guild.roles, id=roleid)
+            studentrole = await guild.create_role(name = student_id)
+            await member.add_roles(studentrole)
             await ctx.author.remove_roles(role)
             await joinmsg(member)
 
