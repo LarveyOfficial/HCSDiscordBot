@@ -1,6 +1,10 @@
+from __future__ import print_function
 from discord.ext import commands
-import discord, time, asyncio, pymongo, string, random, csv
+import discord, time, asyncio, pymongo, string, random, csv, pickle, os.path, smtplib
 from generator import KajGenerator
+from googleapiclient.discovery import build
+from google_auth_oauthlib.flow import InstalledAppFlow
+from google.auth.transport.requests import Request
 if __name__ == '__main__':
     import config
 
@@ -18,6 +22,38 @@ print("authenticated with mongo database")
 hcs_db = client.HCS
 user_col = hcs_db.users
 print('collected documents (' + str(user_col.count_documents({})) + ")")
+
+
+def sendemail(studentemail, emailcode):
+    gmail_user = "hcsdiscordbot@gmail.com"
+    gmail_password = "Qn5ubGC4MXsXnxf"
+
+    sent_from = gmail_user
+    to = studentemail
+    subject = 'HCSDiscordServer Authentication'
+    body = 'Your Verification Code is:\n\n' + emailcode
+
+    email_text = """\
+    From: %s
+    To: %s
+    Subject: %s
+
+    %s
+    """ % (sent_from, ", ".join(to), subject, body)
+    try:
+        emailserver = smtplib.SMTP('smtp.gmail.com', 587)
+        emailserver.ehlo()
+        emailserver.starttls()
+        emailserver.login(gmail_user, gmail_password)
+        emailserver.sendemail(sent_from, to, email_text)
+        emailserver.close()
+        print("Connected to Gmail Servers...")
+        print("Email Sent!")
+    except:
+        print("Something went wrong sending Email...")
+
+
+
 
 
 def make_doc(user_name=None, user_id=None, code=None, grade=None, roles=None, student_id=None, verified=False):
@@ -158,7 +194,11 @@ async def compare_id(channel, member, student_id):
                     print('updated user id to be the user id they have so yeah. Now ima send an email. *dabs*')
                     #send their_doc['code'] to email
                     print('verify using this... $verify '+ their_doc['code'])
+                    emailcode = their_doc['code']
                     await last_message.edit(content="HAHAH found it lol. here go chekc ur mail loser.")
+                    studentemail = str(student_id)+"@hartlandschools.us"
+                    print("Email Address is: "+studentemail)
+                    sendemail(studentemail, emailcode)
                     return True
 
         print('welp... thats a wrap..')
