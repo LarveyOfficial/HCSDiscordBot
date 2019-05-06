@@ -117,7 +117,7 @@ async def on_ready():
 async def make_new_channel(member):
     overwrites = {
         member.guild.default_role: discord.PermissionOverwrite(read_messages=False),
-        member: discord.PermissionOverwrite(read_messages=True),
+        member: discord.PermissionOverwrite(read_messages=True, add_reactions=False),
         bot.user: discord.PermissionOverwrite(read_messages=True)
     }
 
