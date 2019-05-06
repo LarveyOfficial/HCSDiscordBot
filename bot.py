@@ -1,10 +1,9 @@
 from __future__ import print_function
 from discord.ext import commands
-import discord, time, asyncio, pymongo, string, random, csv, pickle, os.path, smtplib
+import discord, time, asyncio, pymongo, string, random, csv, smtplib
 from generator import KajGenerator
-from googleapiclient.discovery import build
-from google_auth_oauthlib.flow import InstalledAppFlow
-from google.auth.transport.requests import Request
+from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
 if __name__ == '__main__':
     import config
 
@@ -25,32 +24,23 @@ print('collected documents (' + str(user_col.count_documents({})) + ")")
 
 
 def sendemail(studentemail, emailcode):
-    gmail_user = "hcsdiscordbot@gmail.com"
-    gmail_password = "Qn5ubGC4MXsXnxf"
+    body = "Your HCSDiscord Verification Code is \n\n" + str(emailcode)
+    emailsubject = "HCSDiscord Authenitcation"
 
-    sent_from = gmail_user
-    to = studentemail
-    subject = 'HCSDiscordServer Authentication'
-    body = 'Your Verification Code is:\n\n' + emailcode
+    emailmsg = MIMEMultipart()
+    emailmsg['To'] = studentemail
+    emailmsg['From'] = config.mailfromAddress
+    emailmsg['Subject'] = emailsubject
+    emailmsg.attach(MIMEText(body, 'plain'))
+    message = emailmsg.as_string()
 
-    email_text = """\
-    From: %s
-    To: %s
-    Subject: %s
-
-    %s
-    """ % (sent_from, ", ".join(to), subject, body)
-    try:
-        emailserver = smtplib.SMTP('smtp.gmail.com', 587)
-        emailserver.ehlo()
-        emailserver.starttls()
-        emailserver.login(gmail_user, gmail_password)
-        emailserver.sendemail(sent_from, to, email_text)
-        emailserver.close()
-        print("Connected to Gmail Servers...")
-        print("Email Sent!")
-    except:
-        print("Something went wrong sending Email...")
+    emailserver = smtplib.SMTP(config.mailfromserver)
+    emailserver.starttls()
+    emailserver.login(config.mailfromAddress, config.mailfrompassword)
+    Print("Sending Email....")
+    emailserver.sendmail(config.mailfromAddress, studentemail, message)
+    Print("Email Sent to " + studentemail)
+    emailserver.quit()
 
 
 
