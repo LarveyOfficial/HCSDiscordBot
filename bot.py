@@ -15,7 +15,7 @@ client = pymongo.MongoClient(config.uri)
 print("authenticated with mongo database")
 hcs_db = client.HCS
 user_col = hcs_db.users
-print('collected documents (' + str(user_col.find({}).count()) + ")")
+print('collected documents (' + str(user_col.count_documents({})) + ")")
 
 
 def make_doc(user_name=None, user_id=None, code=None, grade=None, roles=None, student_id=None, verified=False):
