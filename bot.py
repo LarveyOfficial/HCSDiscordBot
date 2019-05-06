@@ -90,6 +90,7 @@ async def select_middle_school(member, channel):
     their_code = gen_code()
     if not check_for_doc("user_id", str(member.id)):
         user_col.insert_one(make_doc(member.name, member.id, their_code, 'middle', None, None, False))
+        await get_student_id(member, channel)
 
         # send code to email?
 
@@ -141,7 +142,7 @@ async def compare_id(channel, member, student_id):
                 print(row[30] + ' - ' + student_id9)
                 their_doc = user_col.find_one({'user_id': str(member.id)})
                 if their_doc is not None:
-                    updated_tag = {"$set": {'student_id': str(member.id)}}
+                    updated_tag = {"$set": {'student_id': str(student_id)}}
                     user_col.update_one({'user_id': str(member.id)}, updated_tag)
                     print('updated user id to be the user id they have so yeah. Now ima send an email. *dabs*')
                     #send their_doc['code'] to email
