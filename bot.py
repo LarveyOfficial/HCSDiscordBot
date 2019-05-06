@@ -24,7 +24,7 @@ print('collected documents (' + str(user_col.count_documents({})) + ")")
 
 
 def sendemail(studentemail, emailcode):
-    body = "Your HCSDiscord Verification Code is \n\n" + str(emailcode)"\n\n Please use $verify "+str(emailcode)+" in your setup channel"
+    body = "Your HCSDiscord Verification Code is \n\n" + str(emailcode)+"\n\n Please use $verify "+str(emailcode)+ " in your setup channel"
     emailsubject = "HCSDiscord Authenitcation"
 
     emailmsg = MIMEMultipart()
@@ -37,9 +37,9 @@ def sendemail(studentemail, emailcode):
     emailserver = smtplib.SMTP(config.mailfromserver)
     emailserver.starttls()
     emailserver.login(config.mailfromAddress, config.mailfrompassword)
-    Print("Sending Email....")
+    print("Sending Email....")
     emailserver.sendmail(config.mailfromAddress, studentemail, message)
-    Print("Email Sent to " + studentemail)
+    print("Email Sent to " + studentemail)
     emailserver.quit()
 
 
@@ -171,16 +171,12 @@ async def verify(ctx, code: str=None):
             await ctx.author.send("Yeah Boi U got **Verified**!")
             roleid = 573953106417680409
             role = discord.utils.get(ctx.guild.roles, id=roleid)
-            studentrole = await guild.create_role(name = student_id)
-            await member.add_roles(studentrole)
             await ctx.author.remove_roles(role)
-            await joinmsg(member)
 
             channel = discord.utils.get(ctx.guild.text_channels, name=str(ctx.author.id))
             if channel:
                 print(str(ctx.author.id) + " is verified, deleting their setup")
                 await channel.delete()
-                await joinmsg(member)
 
 
 async def compare_id(channel, member, student_id):
@@ -335,6 +331,7 @@ async def on_member_join(member):
     if member.id==bot.user.id:
         return
     await playerjoin(member)
+    await joinmsg(member)
 
 
 bot.run(config.TOKEN)
