@@ -24,7 +24,7 @@ print('collected documents (' + str(user_col.count_documents({})) + ")")
 
 
 def sendemail(studentemail, emailcode):
-    body = "Your HCSDiscord Verification Code is \n\n" + str(emailcode)+"\n\n Please use $verify "+str(emailcode)+ " in your setup channel"
+    body = "Your HCSDiscord Verification Code is \n\n" + str(emailcode)+"\n\nPlease use $verify "+str(emailcode)+ " in your setup channel"
     emailsubject = "HCSDiscord Authenitcation"
 
     emailmsg = MIMEMultipart()
