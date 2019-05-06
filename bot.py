@@ -1,5 +1,5 @@
 from discord.ext import commands
-import discord, time, asyncio, pymongo, string, random
+import discord, time, asyncio, pymongo, string, random, csv
 if __name__ == '__main__':
     import config
 
