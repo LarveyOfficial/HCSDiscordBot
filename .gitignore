@@ -11,3 +11,4 @@ run.bat
 venv
 __pycache__/config.cpython-36.pyc
 *.csv
+__pycache__/generator.cpython-36.pyc

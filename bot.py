@@ -1,5 +1,6 @@
 from discord.ext import commands
 import discord, time, asyncio, pymongo, string, random, csv
+from generator import KajGenerator
 if __name__ == '__main__':
     import config
 
@@ -9,6 +10,7 @@ version = "Alpha 0.1.5"
 bot.remove_command('help')
 print("Loading....")
 owner_ids=[245653078794174465, 282565295351136256]
+gen = KajGenerator()
 
 # lol don't touch this
 client = pymongo.MongoClient(config.uri)
@@ -64,6 +66,16 @@ async def on_ready():
     guilds = list(bot.guilds)
     print("bot logged in with version: "+version)
     print("Connected to " + str(len(bot.guilds)) + " server(s):")
+    bot.loop.create_task(change_status())
+    print('started name loop')
+
+
+async def change_status():
+    a_name = gen.MakeUsername(1)
+    a_name[0] = a_name[0].replace('_', ' ')
+    await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.watching, name=a_name[0]))
+    print('changed name to '+ a_name[0])
+    await asyncio.sleep(60)
 
 
 async def make_new_channel(member):
