@@ -94,6 +94,22 @@ async def select_middle_school(member, channel):
         # send code to email?
 
 
+async def get_student_id(member, channel):
+    await channel.send("Please tell me your student ID")
+    while True:
+        msg = await bot.wait_for('message')
+        if msg.channel.id is channel.id and msg.author.id is member.id:
+            try:
+                student_id = int(msg.content)
+                with open('eggs.csv', newline='') as csvfile:
+                    
+            except ValueError:
+                await channel.send('this isn\'t a student id. Please try again.')
+                continue
+
+
+
+
 async def select_high_school(member, channel):
     print(member.name + " choose highschool, saving to file...")
     await channel.send('-Saving (High School)')
@@ -110,6 +126,7 @@ async def select_high_school(member, channel):
                 print(member.name + " Choose Freshmen... ew")
                 await channel.send('-Saving (9th Grade)')
                 gradeselect = "9th"
+
                 break
             elif reaction2.emoji == "🇧":
                 print(member.name + " Choose Sophmore")

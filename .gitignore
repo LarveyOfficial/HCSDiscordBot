@@ -10,3 +10,4 @@ run.bat
 .idea/HCSDiscordBot.iml
 venv
 __pycache__/config.cpython-36.pyc
+*.csv
