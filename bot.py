@@ -24,7 +24,7 @@ print('collected documents (' + str(user_col.count_documents({})) + ")")
 
 
 def sendemail(studentemail, emailcode):
-    body = "Your HCSDiscord Verification Code is \n\n" + str(emailcode)
+    body = "Your HCSDiscord Verification Code is \n\n" + str(emailcode)"\n\n Please use $verify "+str(emailcode)+" in your setup channel"
     emailsubject = "HCSDiscord Authenitcation"
 
     emailmsg = MIMEMultipart()
@@ -104,7 +104,8 @@ async def on_ready():
     guilds = list(bot.guilds)
     print("bot logged in with version: "+version)
     print("Connected to " + str(len(bot.guilds)) + " server(s):")
-    print('started name loop')
+    print("Bot Connected to Gmail Servers")
+    print('Started Status Loop')
     while True:
         a_name = gen.MakeUsername(1)
         a_name[0] = a_name[0].replace('_', ' ')
@@ -149,7 +150,7 @@ async def get_student_id(member, channel):
         if idmsg.author.id is member.id:
             student_id6 = ''.join(filter(lambda x: x.isdigit(), idmsg.content))
             if student_id6 is '':
-                await channel.send('thats not valid')
+                await channel.send('Thats not a Valid ID')
                 continue
             if await compare_id(idmsg.channel, idmsg.author, student_id6):
                 return
@@ -167,20 +168,24 @@ async def verify(ctx, code: str=None):
         if doc is not None:
             updated_tag = {"$set": {'verified': True, 'code': None}}
             user_col.update_one({'code': code, 'user_id': str(ctx.author.id)}, updated_tag)
-            await ctx.author.send("yeah boi ur verified.")
+            await ctx.author.send("Yeah Boi U got **Verified**!")
             roleid = 573953106417680409
             role = discord.utils.get(ctx.guild.roles, id=roleid)
+            studentrole = await guild.create_role(name = student_id)
+            await member.add_roles(studentrole)
             await ctx.author.remove_roles(role)
+            await joinmsg(member)
 
             channel = discord.utils.get(ctx.guild.text_channels, name=str(ctx.author.id))
             if channel:
                 print(str(ctx.author.id) + " is verified, deleting their setup")
                 await channel.delete()
+                await joinmsg(member)
 
 
 async def compare_id(channel, member, student_id):
     print('started comparing')
-    last_message = await channel.send('searching for student id.')
+    last_message = await channel.send('Searching for your Student ID...')
     with open('eggs.csv', newline='') as csvfile:
         csvReader = csv.reader(csvfile, delimiter=',')
         for row in csvReader:
@@ -195,14 +200,14 @@ async def compare_id(channel, member, student_id):
                     #send their_doc['code'] to email
                     print('verify using this... $verify '+ their_doc['code'])
                     emailcode = their_doc['code']
-                    await last_message.edit(content="HAHAH found it lol. here go chekc ur mail loser.")
                     studentemail = str(student_id)+"@hartlandschools.us"
+                    await last_message.edit(content="Your Student ID was Found! Please check ur email: "+"("+studentemail+")")
                     print("Email Address is: "+studentemail)
                     sendemail(studentemail, emailcode)
                     return True
 
-        print('welp... thats a wrap..')
-        await channel.send('no id found. please try again.')
+        print('No ID Found(Welp.. Thats a Wrap)')
+        await channel.send('Sorry, That ID was not Found. Please Try Again')
         return False
 
 
@@ -330,7 +335,6 @@ async def on_member_join(member):
     if member.id==bot.user.id:
         return
     await playerjoin(member)
-    await joinmsg(member)
 
 
 bot.run(config.TOKEN)
