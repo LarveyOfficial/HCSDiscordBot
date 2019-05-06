@@ -66,16 +66,15 @@ async def on_ready():
     guilds = list(bot.guilds)
     print("bot logged in with version: "+version)
     print("Connected to " + str(len(bot.guilds)) + " server(s):")
-    bot.loop.create_task(change_status())
     print('started name loop')
+    while True:
+        a_name = gen.MakeUsername(1)
+        a_name[0] = a_name[0].replace('_', ' ')
+        await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.watching, name=a_name[0]))
+        print('changed name to '+ a_name[0])
+        await asyncio.sleep(60)
 
 
-async def change_status():
-    a_name = gen.MakeUsername(1)
-    a_name[0] = a_name[0].replace('_', ' ')
-    await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.watching, name=a_name[0]))
-    print('changed name to '+ a_name[0])
-    await asyncio.sleep(60)
 
 
 async def make_new_channel(member):
