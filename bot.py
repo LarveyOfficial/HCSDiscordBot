@@ -97,17 +97,61 @@ async def select_middle_school(member, channel):
 async def get_student_id(member, channel):
     await channel.send("Please tell me your student ID")
     while True:
-        msg = await bot.wait_for('message')
-        if msg.channel.id is channel.id and msg.author.id is member.id:
-            try:
-                student_id = int(msg.content)
-                with open('eggs.csv', newline='') as csvfile:
-                    
-            except ValueError:
-                await channel.send('this isn\'t a student id. Please try again.')
+        idmsg = await bot.wait_for('message')
+        if idmsg.author.id is member.id:
+            student_id6 = ''.join(filter(lambda x: x.isdigit(), idmsg.content))
+            if student_id6 is '':
+                await channel.send('thats not valid')
                 continue
+            if await compare_id(idmsg.channel, idmsg.author, student_id6):
+                return
+            else:
+                continue
+        else:
+            print('not right')
+            continue
 
 
+@bot.command()
+async def verify(ctx, code: str=None):
+    if code is not None:
+        doc = user_col.find_one({'code': code, 'user_id': str(ctx.author.id)})
+        if doc is not None:
+            updated_tag = {"$set": {'verified': True, 'code': None}}
+            user_col.update_one({'code': code, 'user_id': str(ctx.author.id)}, updated_tag)
+            await ctx.author.send("yeah boi ur verified.")
+            roleid = 573953106417680409
+            role = discord.utils.get(ctx.guild.roles, id=roleid)
+            await ctx.author.remove_roles(role)
+
+            channel = discord.utils.get(ctx.guild.text_channels, name=str(ctx.author.id))
+            if channel:
+                print(str(ctx.author.id) + " is verified, deleting their setup")
+                await channel.delete()
+
+
+async def compare_id(channel, member, student_id):
+    print('started comparing')
+    last_message = await channel.send('searching for student id.')
+    with open('eggs.csv', newline='') as csvfile:
+        csvReader = csv.reader(csvfile, delimiter=',')
+        for row in csvReader:
+            student_id9 = ''.join(filter(lambda x: x.isdigit(), row[30]))
+            if str(student_id) in row[30] and len(str(student_id)) == 8:
+                print(row[30] + ' - ' + student_id9)
+                their_doc = user_col.find_one({'user_id': str(member.id)})
+                if their_doc is not None:
+                    updated_tag = {"$set": {'student_id': str(member.id)}}
+                    user_col.update_one({'user_id': str(member.id)}, updated_tag)
+                    print('updated user id to be the user id they have so yeah. Now ima send an email. *dabs*')
+                    #send their_doc['code'] to email
+                    print('verify using this... $verify '+ their_doc['code'])
+                    await last_message.edit(content="HAHAH found it lol. here go chekc ur mail loser.")
+                    return True
+
+        print('welp... thats a wrap..')
+        await channel.send('no id found. please try again.')
+        return False
 
 
 async def select_high_school(member, channel):
@@ -126,7 +170,6 @@ async def select_high_school(member, channel):
                 print(member.name + " Choose Freshmen... ew")
                 await channel.send('-Saving (9th Grade)')
                 gradeselect = "9th"
-
                 break
             elif reaction2.emoji == "🇧":
                 print(member.name + " Choose Sophmore")
@@ -157,6 +200,7 @@ async def select_high_school(member, channel):
         print("saving...")
         user_col.insert_one(make_doc(member.name, member.id, their_code, gradeselect, None, None, False))
         print("saved.")
+        await get_student_id(member, channel)
 
         # send code to email?
 
