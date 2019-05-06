@@ -43,7 +43,19 @@ def sendemail(studentemail, emailcode):
     emailserver.quit()
 
 
+def MakeEmbed(author=None, author_url=None, title=None, description=None, url=None, thumbnail=None, doFooter=False):
+    if url is not None:
+        embed = discord.Embed(title=title, description=description, url=url, color=discord.Color.dark_blue())
+    else:
+        embed = discord.Embed(title=title, description=description, color=discord.Color.dark_blue())
 
+    if thumbnail is not None:
+        embed.set_thumbnail(url=thumbnail)
+    if author is not None and author_url is not None:
+        embed.set_author(name=author, url=author_url)
+    if doFooter is True:
+        embed.set_footer(text="HCS discord bot.", icon_url=bot.user.avatar_url)
+    return embed
 
 
 def make_doc(user_name=None, user_id=None, code=None, grade=None, roles=None, student_id=None, verified=False):
@@ -99,8 +111,6 @@ async def on_ready():
         await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.watching, name=a_name[0]))
         print('changed name to '+ a_name[0])
         await asyncio.sleep(60)
-
-
 
 
 async def make_new_channel(member):
