@@ -14,6 +14,7 @@ bot.remove_command('help')
 print("Loading....")
 owner_ids=[245653078794174465, 282565295351136256]
 gen = KajGenerator()
+role_list = ['Band', 'Drama']
 
 # lol don't touch this
 client = pymongo.MongoClient(config.uri)
@@ -309,6 +310,37 @@ async def playerjoin(member):
 
             else:
                 continue
+
+
+@bot.command()
+async def role(ctx, _role: str=None):
+    if _role is None:
+        embed = MakeEmbed(title="List of Roles:", description=(', '.join(role_list)),doFooter=True)
+        await ctx.send(embed=embed)
+    else:
+        get_role = discord.utils.get(ctx.guild.roles, name=_role)
+        if get_role != None:
+            await ctx.author.add_roles(get_role)
+            print("Adding " + str(ctx.author) + " To Role: " + str(get_role))
+            embedconfirm = MakeEmbed(title="Added you to Role:", description=str(get_role), doFooter=True)
+            await ctx.send(embed=embedconfirm)
+        else:
+            await ctx.send("That Role Dosen't Exist")
+
+@bot.command()
+async def rmrole(ctx, _role: str=None):
+    if _role is None:
+        embed = MakeEmbed(title="List of Roles:", description=(', '.join(role_list)),doFooter=True)
+        await ctx.send(embed=embed)
+    else:
+        get_role = discord.utils.get(ctx.guild.roles, name=_role)
+        if get_role != None and get_role in ctx.author.roles:
+            await ctx.author.remove_roles(get_role)
+            print("Removing " + str(ctx.author) + " From Role: " + str(get_role))
+            embedconfirm = MakeEmbed(title="Removed you From Role:", description=str(get_role), doFooter=True)
+            await ctx.send(embed=embedconfirm)
+        else:
+            await ctx.send("You don't have that Role")
 
 
 @bot.event
