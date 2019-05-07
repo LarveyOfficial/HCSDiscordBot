@@ -144,13 +144,17 @@ async def select_middle_school(member, channel):
 
 
 async def get_student_id(member, channel):
-    await channel.send("Please tell me your student ID")
+    await channel.send("*Step three:* Please type your student ID.")
     while True:
         idmsg = await bot.wait_for('message')
         if idmsg.author.id is member.id:
             student_id6 = ''.join(filter(lambda x: x.isdigit(), idmsg.content))
+            try_for_id = user_col.find_one({'student_id': str(student_id6)})
+            if try_for_id is not None:
+                await channel.send('ERROR: That ID is already In use. Please use another one. Contact Larvey#0001 if this *is* your student ID.')
+                continue
             if student_id6 is '':
-                await channel.send('Thats not a Valid ID')
+                await channel.send('ERROR: Thats not a Valid ID')
                 continue
             if await compare_id(idmsg.channel, idmsg.author, student_id6):
                 return
@@ -181,7 +185,7 @@ async def verify(ctx, code: str=None):
 
 async def compare_id(channel, member, student_id):
     print('started comparing')
-    last_message = await channel.send('Searching for your Student ID...')
+    confirmmsg = await channel.send('Searching for your Student ID...')
     with open('eggs.csv', newline='') as csvfile:
         csvReader = csv.reader(csvfile, delimiter=',')
         for row in csvReader:
@@ -190,16 +194,13 @@ async def compare_id(channel, member, student_id):
                 print(row[30] + ' - ' + student_id9)
                 their_doc = user_col.find_one({'user_id': str(member.id)})
                 if their_doc is not None:
-                    updated_tag = {"$set": {'student_id': str(student_id)}}
-                    user_col.update_one({'user_id': str(member.id)}, updated_tag)
-                    print('updated user id to be the user id they have so yeah. Now ima send an email. *dabs*')
-                    print('verify using this... $verify '+ their_doc['code'])
+                    #print('verify using this... $verify '+ their_doc['code'])
                     emailcode = their_doc['code']
                     studentemail = str(student_id)+"@hartlandschools.us"
-                    await last_message.delete()
-                    confirmmsg = await channel.send("We found that Student ID! ("+student_id+") "+"Would you like us to send you an email to confirm it is you?")
-                    await confirmmsg.add_reaction("🇾")
-                    await confirmmsg.add_reaction("🇳")
+                    #await last_message.delete()
+                    await confirmmsg.edit(content="Found that Student ID! ("+student_id+") "+"Would you like us to send you an email to confirm it is you?")
+                    react_yes = await confirmmsg.add_reaction("🇾")
+                    react_no = await confirmmsg.add_reaction("🇳")
                     while True:
                         reaction3, react_member3 = await bot.wait_for('reaction_add')
                         if react_member3.id is member.id:
@@ -208,22 +209,27 @@ async def compare_id(channel, member, student_id):
                                 print("Email Address is: "+studentemail)
                                 await channel.send("We have sent you an email with a Verifiation Code to "+studentemail)
                                 sendemail(studentemail, emailcode)
+                                updated_tag = {"$set": {'student_id': str(student_id)}}
+                                user_col.update_one({'user_id': str(member.id)}, updated_tag)
+                                print('updated user id to be the user id they have so yeah. Now ima send an email. *dabs*')
                                 return True
                             if reaction3.emoji == "🇳":
-                                await channel.send("Ok Restarting Student ID question.")
-                                await get_student_id(member, channel)
+                                await confirmmsg.edit(content="Not sending email. (In order to complete the setup, you will need to verify by email.)\nPlease type your student ID.")
+                                await confirmmsg.remove_reaction("🇾", bot.user)
+                                await confirmmsg.remove_reaction("🇳", bot.user)
+                                await confirmmsg.remove_reaction("🇳", react_member3)
+                                return False
 
 
         print('No ID Found(Welp.. Thats a Wrap)')
-        await channel.send('Sorry, That ID was not Found. Please Try Again')
+        await confirmmsg.edit(content='Sorry, That ID was not Found. Please Try Again')
         return False
 
 
 async def select_high_school(member, channel):
-    print(member.name + " choose highschool, saving to file...")
-    await channel.send('-Saving (High School)')
+    print(member.name + " choose highschool")
 
-    msg2 = await channel.send("Whats your grade?\n\nA: Freshmen\nB: Sophmore\nC: Junior\nD: Senior")
+    msg2 = await channel.send("*Step two:* Whats your grade?\n\n🇦: Freshmen,\n🇧: Sophmore,\n🇨: Junior,\n🇩: Senior\n\nReact accordingly.")
     await msg2.add_reaction("🇦")
     await msg2.add_reaction("🇧")
     await msg2.add_reaction("🇨")
@@ -233,22 +239,22 @@ async def select_high_school(member, channel):
         if react_member2.id is member.id:
             if reaction2.emoji == "🇦":
                 print(member.name + " Choose Freshmen... ew")
-                await channel.send('-Saving (9th Grade)')
+                await msg2.edit(content='9th grade selected')
                 gradeselect = "9th"
                 break
             elif reaction2.emoji == "🇧":
                 print(member.name + " Choose Sophmore")
-                await channel.send('-Saving (10th Grade)')
+                await msg2.edit(content='10th grade selected')
                 gradeselect = "10th"
                 break
             elif reaction2.emoji == "🇨":
                 print(member.name + " Choose Junior")
-                await channel.send('-Saving (11th Grade)')
+                await msg2.edit(content='11th grade selected')
                 gradeselect = "11th"
                 break
             elif reaction2.emoji == "🇩":
                 print(member.name + " Choose Senior")
-                await channel.send('-Saving (12th Grade)')
+                await msg2.edit(content='12th grade selected')
                 gradeselect = "12th"
                 break
             else:
@@ -286,7 +292,7 @@ async def playerjoin(member):
     print('New player joined... Making Setup Room')
     channel = await make_new_channel(member)
 
-    msg = await channel.send("Welcome " + str(member) + " to the HCS Discord Server!\nLets Start the Setup!\nAre you from the Highschool, or the Middleschool? React Acordingly")
+    msg = await channel.send("**Welcome " + str(member) + " to the HCS Discord Server!**\n\n__Lets Start the Setup!__ \n*Step one:* Are you from the High School, or the Middle School? React Acordingly.")
     await msg.add_reaction("🇭")
     await msg.add_reaction("🇲")
 
