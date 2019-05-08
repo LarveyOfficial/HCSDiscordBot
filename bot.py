@@ -82,6 +82,17 @@ def check_for_doc(check_key, check_val, check_key2=None, check_val2=None):
         else:
             return False
 
+@bot.command()
+async def help(ctx):
+    embed = MakeEmbed(title="Help", description="The following commands can be used by anyone:\n-help\n-role\n-rmrole\n-ping\n-ticket(comingsoon)",doFooter=True)
+    await ctx.send(embed=embed)
+
+
+@bot.command()
+async def ping(ctx):
+    embed=MakeEmbed(title='🏓 PONG 🏓',description="**{0} ms**".format(round(bot.latency * 1000, 1)))
+    await ctx.send(embed=embed)
+
 
 @bot.command()
 async def purge_all(ctx):
@@ -341,6 +352,8 @@ async def rmrole(ctx, _role: str=None):
             await ctx.send(embed=embedconfirm)
         else:
             await ctx.send("You don't have that Role")
+
+@bot.command()
 
 
 @bot.event
