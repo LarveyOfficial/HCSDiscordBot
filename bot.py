@@ -59,8 +59,8 @@ def MakeEmbed(author=None, author_url=None, title=None, description=None, url=No
     return embed
 
 
-def make_doc(user_name=None, user_id=None, code=None, grade=None, roles=None, student_id=None, verified=False):
-    doc_ = {'user_name': user_name, 'user_id': str(user_id), 'code': code, 'grade': str(grade), 'roles': roles, 'student_id': str(student_id), 'verified': verified}  # 'code' == None if verified and verified will be true
+def make_doc(user_name=None, user_id=None, code=None, grade=None, student_id=None, verified=False):
+    doc_ = {'user_name': user_name, 'user_id': str(user_id), 'code': code, 'grade': str(grade), 'student_id': str(student_id), 'verified': verified}  # 'code' == None if verified and verified will be true
     return doc_
 
 
@@ -81,6 +81,26 @@ def check_for_doc(check_key, check_val, check_key2=None, check_val2=None):
             return True
         else:
             return False
+
+
+@bot.command()
+async def ticket(ctx, *, name:str = None):
+    embed = MakeEmbed(title="Ticket", description="Making your Ticket...", doFooter=True)
+    ctx.send(embed=embed)
+    overwrites = {
+        ctx.guild.default_role: discord.PermissionOverwrite(read_messages=False),
+        ctx.author: discord.PermissionOverwrite(read_messages=True),
+        bot.user: discord.PermissionOverwrite(read_messages=True),
+    }
+    ticketcategory = discord.utils.get(ctx.guild.categories, name="Tickets")
+    if not ticketcategory:
+        await ctx.guild.create_category_channel(name="Tickets")
+        ticketcategory = discord.utils.get(ctx.guild.categories, name="Tickets")
+    ticketname = "Ticket - {0}".format(ctx.author.id)
+    ticketchannel = await ctx.guild.create_text_channel(name, overwrites=overwrites, category=category)
+    print(str(ctx.author) + "Needs A Ticket..")
+    ticketembed = MakeEmbed(Title="Ticket",description="Welcome" + str(ctx.author) + "This is your Ticket!", doFooter=True)
+    ticketchannel.send(embed=ticketembed)
 
 @bot.command()
 async def help(ctx):
@@ -146,10 +166,12 @@ async def make_new_channel(member):
 async def select_middle_school(member, channel):
     print(member.name + " choose middleschool, saving to file...")
     await channel.send('-Saving (Middle School)')
-
+    roleid = 575633744204136469
+    role = discord.utils.get(member.guild.roles, id=roleid)
+    await member.add_roles(role)
     their_code = gen_code()
     if not check_for_doc("user_id", str(member.id)):
-        user_col.insert_one(make_doc(member.name, member.id, their_code, 'middle', None, None, False))
+        user_col.insert_one(make_doc(member.name, member.id, their_code, 'middle', None, False))
         await get_student_id(member, channel)
 
         # send code to email?
@@ -253,21 +275,34 @@ async def select_high_school(member, channel):
                 print(member.name + " Choose Freshmen... ew")
                 await msg2.edit(content='9th grade selected')
                 gradeselect = "9th"
+                roleid = 575633795512926218
+                role = discord.utils.get(member.guild.roles, id=roleid)
+                await member.add_roles(role)
                 break
             elif reaction2.emoji == "🇧":
                 print(member.name + " Choose Sophmore")
                 await msg2.edit(content='10th grade selected')
                 gradeselect = "10th"
+                roleid = 575633870511276042
+                role = discord.utils.get(member.guild.roles, id=roleid)
+                await member.add_roles(role)
                 break
             elif reaction2.emoji == "🇨":
                 print(member.name + " Choose Junior")
                 await msg2.edit(content='11th grade selected')
                 gradeselect = "11th"
+                roleid = 575633908910260224
+                role = discord.utils.get(member.guild.roles, id=roleid)
+                await member.add_roles(role)
                 break
             elif reaction2.emoji == "🇩":
                 print(member.name + " Choose Senior")
                 await msg2.edit(content='12th grade selected')
                 gradeselect = "12th"
+                roleid = 575633945937575936
+                role = discord.utils.get(member.guild.roles, id=roleid)
+                await member.add_roles(role)
+                print(member.name + " Choose Senior")
                 break
             else:
                 print("not right emoji")
@@ -281,7 +316,7 @@ async def select_high_school(member, channel):
     print("generated code: " + str(their_code))
     if not check_for_doc("user_id", str(member.id)):
         print("saving...")
-        user_col.insert_one(make_doc(member.name, member.id, their_code, gradeselect, None, None, False))
+        user_col.insert_one(make_doc(member.name, member.id, their_code, gradeselect, None, False))
         print("saved.")
         await get_student_id(member, channel)
 
