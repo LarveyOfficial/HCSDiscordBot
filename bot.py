@@ -25,7 +25,7 @@ print('collected documents (' + str(user_col.count_documents({})) + ")")
 
 
 def sendemail(studentemail, emailcode):
-    body = "Your HCSDiscord Verification Code is \n\n" + str(emailcode)+"\n\nPlease use $verify "+str(emailcode)+ " in your setup channel\n\n" + "If you don't believe this was you please msg Larvey#0001 on Discord."
+    body = "Your HCSDiscord Verification Code is \n\n" + str(emailcode)+"\n\nPlease use $verify "+str(emailcode)+ " in your setup channel\nYour code will Expire in 24hours\n\n" + "If you don't believe this was you please msg Larvey#0001 on Discord."
     emailsubject = "HCSDiscord Authenitcation"
 
     emailmsg = MIMEMultipart()
@@ -44,11 +44,17 @@ def sendemail(studentemail, emailcode):
     emailserver.quit()
 
 
-def MakeEmbed(author=None, author_url=None, title=None, description=None, url=None, thumbnail=None, doFooter=False):
+def MakeEmbed(author=None, author_url=None, title=None, description=None, url=None, thumbnail=None, doFooter=False, color=None):
     if url is not None:
-        embed = discord.Embed(title=title, description=description, url=url, color=discord.Color.dark_blue())
+        if color is None:
+            embed = discord.Embed(title=title, description=description, url=url, color=discord.Color.dark_blue())
+        else:
+            embed = discord.Embed(title=title, description=description, url=url, color=color)
     else:
-        embed = discord.Embed(title=title, description=description, color=discord.Color.dark_blue())
+        if color is None:
+            embed = discord.Embed(title=title, description=description, color=discord.Color.dark_blue())
+        else:
+            embed = discord.Embed(title=title, description=description, color=color)
 
     if thumbnail is not None:
         embed.set_thumbnail(url=thumbnail)
@@ -83,28 +89,118 @@ def check_for_doc(check_key, check_val, check_key2=None, check_val2=None):
             return False
 
 
+
+async def twofourtimer(member):
+    asyncio.sleep(86400)
+    if user_col.find_one({'verify': True, 'user_id': str(member.id)}):
+        return
+    else:
+        await member.kick()
+        user_col.delete_one({'verify': False, 'user_id': str(member.id)})
+
+
+
 @bot.command()
 async def ticket(ctx, *, name:str = None):
     embed = MakeEmbed(title="Ticket", description="Making your Ticket...", doFooter=True)
-    ctx.send(embed=embed)
+    await ctx.send(embed=embed)
     overwrites = {
         ctx.guild.default_role: discord.PermissionOverwrite(read_messages=False),
         ctx.author: discord.PermissionOverwrite(read_messages=True),
         bot.user: discord.PermissionOverwrite(read_messages=True),
     }
-    ticketcategory = discord.utils.get(ctx.guild.categories, name="Tickets")
+    ticketcategory = discord.utils.get(ctx.guild.categories, name="tickets")
     if not ticketcategory:
-        await ctx.guild.create_category_channel(name="Tickets")
-        ticketcategory = discord.utils.get(ctx.guild.categories, name="Tickets")
+        await ctx.guild.create_category_channel(name="tickets")
+        ticketcategory = discord.utils.get(ctx.guild.categories, name="tickets")
     ticketname = "Ticket - {0}".format(ctx.author.id)
-    ticketchannel = await ctx.guild.create_text_channel(name, overwrites=overwrites, category=category)
-    print(str(ctx.author) + "Needs A Ticket..")
-    ticketembed = MakeEmbed(Title="Ticket",description="Welcome" + str(ctx.author) + "This is your Ticket!", doFooter=True)
-    ticketchannel.send(embed=ticketembed)
+    ticketchannel = await ctx.guild.create_text_channel(ticketname, overwrites=overwrites, category=ticketcategory)
+    print(ctx.author.name + "Needs A Ticket..")
+    ticketembed = MakeEmbed(title="Ticket",description="Welcome" + ctx.author.name + "This is your Ticket!", doFooter=True)
+    await ticketchannel.send(embed=ticketembed)
+
 
 @bot.command()
+async def adduser(ctx, member:discord.Member = None):
+    if member is not None:
+        if member:
+            category = discord.utils.get(ctx.guild.categories, name="tickets")
+            if ctx.channel.category_id == category.id:
+                await ctx.channel.set_permissions(member, read_messages=True, send_messages=True)
+                successadd = MakeEmbed(title="Ticket", description="I have added " + member.mention + " to this Ticket!")
+                await ctx.send(embed=successadd)
+            else:
+                notinticket = MakeEmbed(title="ERROR", description="This command must be made in a Ticket Channel!", doFooter=True, color=discord.Color.dark_red())
+                await ctx.send(embed=notinticket)
+        else:
+            membernotfound = MakeEmbed(title="ERROR", description="I couldn't find that user!", doFooter=True, color=discord.Color.dark_red())
+            await ctx.send(embed=membernotfound)
+    else:
+        membernotexist = MakeEmbed(title="ERROR", description="Please Specify a User!", doFooter=True, color=discord.Color.dark_red())
+        await ctx.send(embed=membernotexist)
+
+@bot.command()
+async def rmuser(ctx, member:discord.Member = None):
+    if member is not None:
+        if member:
+            category = discord.utils.get(ctx.guild.categories, name="tickets")
+            if ctx.channel.category_id == category.id:
+                await ctx.channel.set_permissions(member, read_messages=False, send_messages=False)
+                successrm = MakeEmbed(title="Ticket", description="I have removed " + member.name + " from this Ticket.")
+                await ctx.send(embed=successrm)
+            else:
+                notinticket = MakeEmbed(title="ERROR", description="This command must be made in a Ticket Channel!", doFooter=True, color=discord.Color.dark_red())
+                await ctx.send(embed=notinticket)
+        else:
+            membernotfound = MakeEmbed(title="ERROR", description="That user isn't in this Ticket!", doFooter=True, color=discord.Color.dark_red())
+            await ctx.send(embed=membernotfound)
+    else:
+        membernotexist = MakeEmbed(title="ERROR", description="Please Specify a User!", doFooter=True, color=discord.Color.dark_red())
+        await ctx.send(embed=membernotexist)
+
+@bot.command()
+async def close(ctx, *, name:str = None):
+    ticketcategory = discord.utils.get(ctx.guild.categories, name="tickets")
+    roleid = 575683473474453504
+    if ctx.channel.category_id == ticketcategory.id:
+        if ctx.channel.name == "ticket-{0}".format(ctx.author.id):
+            await ctx.channel.delete()
+        elif roleid in [y.id for y in ctx.author.roles]:
+            await ctx.channel.delete()
+        else:
+            noturticketlol = MakeEmbed(title="ERROR", description="This is not your Ticket!", doFooter=True, color=discord.Color.dark_red())
+            await ctx.send(embed=noturticketlol)
+
+    else:
+        notinticketcategory = MakeEmbed(title="ERROR", description="This command can only be done in a ticket!", doFooter=True, color=discord.Color.dark_red())
+        await ctx.send(embed=notinticketcategory)
+
+
+
+@bot.group()
 async def help(ctx):
-    embed = MakeEmbed(title="Help", description="The following commands can be used by anyone:\n-help\n-role\n-rmrole\n-ping\n-ticket(comingsoon)",doFooter=True)
+    if ctx.invoked_subcommand is None:
+        embed = MakeEmbed(title="Help", description="The following commands can be used by anyone:\n-role\n-rmrole\n-ping\n-ticket\n-help <command>",doFooter=True)
+        await ctx.send(embed=embed)
+
+@help.command()
+async def role(ctx):
+    embed = MakeEmbed(title="Help - Role", description="$role <role> to add yourself to a role.", doFooter=True)
+    await ctx.send(embed=embed)
+
+@help.command()
+async def rmrole(ctx):
+    embed = MakeEmbed(title="Help - RmRole", description="$rmrole <role> to remove yourself from a role.", doFooter=True)
+    await ctx.send(embed=embed)
+
+@help.command()
+async def ping(ctx):
+    embed = MakeEmbed(title="Help - Ping", description="$ping to check bots ping.", doFooter=True)
+    await ctx.send(embed=embed)
+
+@help.command()
+async def ticket(ctx):
+    embed = MakeEmbed(title="Help - Ticket", description="$ticket - To make a new ticket\n$close - To close a ticket\n$adduser <user> - To add a user to a Ticket\n$rmuser <user> - To remove user from a Ticket", doFooter=True)
     await ctx.send(embed=embed)
 
 
@@ -127,7 +223,7 @@ async def purge_all(ctx):
         return
     else:
         print('user requested purge of database: '+ctx.author.name+'\nbut was denied.')
-        await msg.edit(content='you can\'t do that lmao')
+        await msg.edit(content="you can't do that lmao")
         return
 
 
@@ -192,12 +288,14 @@ async def get_student_id(member, channel):
                 continue
             if await compare_id(idmsg.channel, idmsg.author, student_id6):
                 return
+                #maybe add twofourtimer(member) here
+                #or add break
             else:
                 continue
         else:
             print('not right')
             continue
-
+        #if add break at line 290 then twofourtimer(member) here
 
 @bot.command()
 async def verify(ctx, code: str=None):
@@ -325,7 +423,7 @@ async def select_high_school(member, channel):
 
 async def joinmsg(member):
     welcome = discord.utils.get(member.guild.channels, id=int(573171504234233888))
-    embed = discord.Embed(title="Member Joined", description=member.name, color=0x1394ff)
+    embed = discord.Embed(title="Member Joined", description=member.name, color=discord.Color.dark_blue())
     await welcome.send(embed=embed)
 
 
@@ -386,6 +484,7 @@ async def rmrole(ctx, _role: str=None):
             embedconfirm = MakeEmbed(title="Removed you From Role:", description=str(get_role), doFooter=True)
             await ctx.send(embed=embedconfirm)
         else:
+            embederror = MakeEmbed(title="ERROR", description="You don't have that Role!", doFooter=True, color=discord.Color.dark_red())
             await ctx.send("You don't have that Role")
 
 @bot.command()
