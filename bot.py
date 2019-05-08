@@ -88,15 +88,24 @@ def check_for_doc(check_key, check_val, check_key2=None, check_val2=None):
         else:
             return False
 
-
+def hasverifed(verified=False):
+    if verified is False:
+        return False
+    elif verified is True:
+        return True
 
 async def twofourtimer(member):
-    asyncio.sleep(86400)
-    if user_col.find_one({'verify': True, 'user_id': str(member.id)}):
-        return
+    while hasverifed() is False:
+        print("Starting 24Hour Timer")
+        await asyncio.sleep(86400)
+        if user_col.find_one({'verify': True, 'user_id': str(member.id)}):
+            return
+        else:
+            await member.kick()
+            user_col.delete_one({'verify': False, 'user_id': str(member.id)})
     else:
-        await member.kick()
-        user_col.delete_one({'verify': False, 'user_id': str(member.id)})
+        print("User Verifed Stoping Timer")
+        return
 
 
 
@@ -268,6 +277,7 @@ async def select_middle_school(member, channel):
     their_code = gen_code()
     if not check_for_doc("user_id", str(member.id)):
         user_col.insert_one(make_doc(member.name, member.id, their_code, 'middle', None, False))
+        hasverifed(verified = False)
         await get_student_id(member, channel)
 
         # send code to email?
@@ -288,14 +298,11 @@ async def get_student_id(member, channel):
                 continue
             if await compare_id(idmsg.channel, idmsg.author, student_id6):
                 return
-                #maybe add twofourtimer(member) here
-                #or add break
             else:
                 continue
         else:
             print('not right')
             continue
-        #if add break at line 290 then twofourtimer(member) here
 
 @bot.command()
 async def verify(ctx, code: str=None):
@@ -308,7 +315,7 @@ async def verify(ctx, code: str=None):
             roleid = 573953106417680409
             role = discord.utils.get(ctx.guild.roles, id=roleid)
             await ctx.author.remove_roles(role)
-
+            hasverifed(verified = True)
             channel = discord.utils.get(ctx.guild.text_channels, name=str(ctx.author.id))
             if channel:
                 print(str(ctx.author.id) + " is verified, deleting their setup")
@@ -415,6 +422,7 @@ async def select_high_school(member, channel):
     if not check_for_doc("user_id", str(member.id)):
         print("saving...")
         user_col.insert_one(make_doc(member.name, member.id, their_code, gradeselect, None, False))
+        hasverifed(verified = False)
         print("saved.")
         await get_student_id(member, channel)
 
