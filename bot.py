@@ -470,7 +470,7 @@ async def role(ctx, _role: str=None):
         await ctx.send(embed=embed)
     else:
         if _role.lower() in role_list:
-            get_role = discord.utils.get(ctx.guild.roles, name=_role)
+            get_role = discord.utils.get(ctx.guild.roles, name=_role.lower())
             if get_role is not None:
                 await ctx.author.add_roles(get_role)
                 await log("Adding " + str(ctx.author) + " To Role: " + str(get_role))
@@ -488,7 +488,7 @@ async def rmrole(ctx, _role: str=None):
         embed = MakeEmbed(title="List of Roles:", description=(', '.join(role_list)),doFooter=True)
         await ctx.send(embed=embed)
     else:
-        get_role = discord.utils.get(ctx.guild.roles, name=_role)
+        get_role = discord.utils.get(ctx.guild.roles, name=_role.lower())
         if get_role is not None and get_role in ctx.author.roles:
             await ctx.author.remove_roles(get_role)
             await log("Removing " + str(ctx.author) + " From Role: " + str(get_role))
