@@ -122,7 +122,7 @@ async def ticket(ctx, *, name:str = None):
     ticketname = "ticket-{0}".format(ctx.author.id)
     ticketchannel = await ctx.guild.create_text_channel(ticketname, overwrites=overwrites, category=ticketcategory)
     await log(ctx.author.name + "Needs A Ticket..")
-    ticketembed = MakeEmbed(title="Ticket",description="Welcome" + ctx.author.name + "This is your Ticket!", doFooter=True)
+    ticketembed = MakeEmbed(title="Ticket",description="Welcome" + ctx.author.name + " This is your Ticket!", doFooter=True)
     await ticketchannel.send(embed=ticketembed)
 
 
