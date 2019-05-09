@@ -533,7 +533,28 @@ async def on_command_error(ctx, error):
     raise error
 
 
+@bot.command()
+async def StartInitialSetup(ctx):
+    Msg = await ctx.send("Are you sure you want to continue?")
+    await Msg.add_reaction("🇾")
+    await Msg.add_reaction("🇳")
+    while True:
+        reaction4, react_member4 = await bot.wait_for('reaction_add')
+        if react_member4.id is ctx.author.id:
+            if reaction4.emoji == "🇾":
+                allmembers = bot.get_all_members()
+                await allmembers.send("Test")
+                break
+
+            elif reaction4.emoji == "🇳":
+                await ctx.send("N")
+                break
+
+            else:
+                continue
+
 async def purge_unverified():
+    print("Initiated Inactive Loop")
     while not bot.is_closed():
         await asyncio.sleep(60*60*24)
         accounts_deleted = 0
