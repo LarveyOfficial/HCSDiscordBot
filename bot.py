@@ -539,5 +539,5 @@ async def on_member_join(member):
     await joinmsg(member)
 
 
-bot.loop.create_task(purge_unverified)
+bot.loop.create_task(purge_unverified())
 bot.run(config.TOKEN)
