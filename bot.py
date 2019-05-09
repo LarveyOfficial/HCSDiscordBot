@@ -528,7 +528,6 @@ async def giverole(member):
 
 
 async def purge_unverified():
-    await log('purge loop started')
     while not bot.is_closed():
         await asyncio.sleep(60*60*24)
         accounts_deleted = 0
