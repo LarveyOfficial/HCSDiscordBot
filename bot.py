@@ -172,7 +172,7 @@ async def rmuser(ctx, member:discord.Member = None):
 @bot.command()
 async def close(ctx):
     ticketcategory = discord.utils.get(ctx.guild.categories, name="tickets")
-    roleid = 575683473474453504
+    roleid = 543060916086767617
     if ctx.channel.category_id == ticketcategory.id:
         if ctx.channel.name == "ticket-{0}".format(ctx.author.id):
             await ctx.channel.delete()
@@ -349,7 +349,7 @@ async def compare_id(channel, member, student_id):
                             if reaction3.emoji == "🇾":
                                 await log(member.name + " has confirmed that "+student_id+" is their student ID. Sending Email.")
                                 await log("Email Address is: "+studentemail)
-                                await channel.send("We have sent you an email with a Verifiation Code to "+studentemail+"Please use $verify <VERIFICATION CODE>")
+                                await channel.send("We have sent you an email with a Verifiation Code to "+studentemail+" Please use $verify <VERIFICATION CODE>")
                                 await sendemail(studentemail, emailcode)
                                 updated_tag = {"$set": {'student_id': str(student_id)}}
                                 user_col.update_one({'user_id': str(member.id)}, updated_tag)
