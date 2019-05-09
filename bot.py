@@ -527,6 +527,11 @@ async def giverole(member):
     await log(member.name + "(" + str(member.id) + ") " + "has Joined the discord adding them to the role: " + str(role))
 
 
+@bot.event
+async def on_command_error(error):
+    await log_error(error)
+
+
 async def purge_unverified():
     while not bot.is_closed():
         await asyncio.sleep(60*60*24)
