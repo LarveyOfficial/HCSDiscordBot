@@ -530,6 +530,7 @@ async def giverole(member):
 @bot.event
 async def on_command_error(ctx, error):
     await log_error(str(error))
+    raise error
 
 
 async def purge_unverified():
