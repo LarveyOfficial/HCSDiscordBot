@@ -469,14 +469,17 @@ async def role(ctx, _role: str=None):
         embed = MakeEmbed(title="List of Roles:", description=(', '.join(role_list)),doFooter=True)
         await ctx.send(embed=embed)
     else:
-        get_role = discord.utils.get(ctx.guild.roles, name=_role)
-        if get_role is not None:
-            await ctx.author.add_roles(get_role)
-            await log("Adding " + str(ctx.author) + " To Role: " + str(get_role))
-            embedconfirm = MakeEmbed(title="Added you to Role:", description=str(get_role), doFooter=True)
-            await ctx.send(embed=embedconfirm)
+        if _role in role_list:
+            get_role = discord.utils.get(ctx.guild.roles, name=_role)
+            if get_role is not None:
+                await ctx.author.add_roles(get_role)
+                await log("Adding " + str(ctx.author) + " To Role: " + str(get_role))
+                embedconfirm = MakeEmbed(title="Added you to Role:", description=str(get_role), doFooter=True)
+                await ctx.send(embed=embedconfirm)
+            else:
+                await ctx.send("That Role Dosen't Exist")
         else:
-            await ctx.send("That Role Dosen't Exist")
+            ctx.send("That Role Dosen't Exist")
 
 
 @bot.command()
