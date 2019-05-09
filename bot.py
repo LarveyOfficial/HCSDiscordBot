@@ -544,7 +544,7 @@ async def StartInitialSetup(ctx):
             if react_member4.id is ctx.author.id:
                 if reaction4.emoji == "🇾":
                     for x in bot.get_all_members():
-                        embed = MakeEmbed(title="HCS Discord Server", description="Hello," + x.mention + " Due to the new HCS Discord Bot! (Me),\n we have to have you go through new protocols\n This includes verification of you going to Hartland.\n Rejoin this server with this Link: INSERT LINK", doFooter=True)
+                        embed = MakeEmbed(title="HCS Discord Server", description="Hello," + x.mention + " Due to the new HCS Discord Bot! (Me).\n We have to have you go through new protocols.\n This includes verification of you going to Hartland.\n Rejoin this server with this Link: "+ config.invite_url, doFooter=True)
                         await x.send(embed=embed)
                     break
 
