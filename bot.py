@@ -14,7 +14,7 @@ bot.remove_command('help')
 print("Loading....")
 owner_ids=[245653078794174465, 282565295351136256]
 gen = KajGenerator()
-role_list = ['Band', 'Drama']
+role_list = ['Band', 'Super Smash Bros Players']
 
 # lol don't touch this
 client = pymongo.MongoClient(config.uri)
@@ -25,7 +25,7 @@ print('collected documents (' + str(user_col.count_documents({})) + ")")
 
 
 def sendemail(studentemail, emailcode):
-    body = "Your HCSDiscord Verification Code is \n\n" + str(emailcode)+"\n\nPlease use $verify "+str(emailcode)+ " in your setup channel\nYour code will Expire in 24hours\n\n" + "If you don't believe this was you please msg Larvey#0001 on Discord."
+    body = "Your HCSDiscord Verification Code is \n\n" + str(emailcode)+"\n\nPlease use $verify "+str(emailcode)+ " in your setup channel.\n\n" + "If you don't believe this was you please msg Larvey#0001 on Discord."
     emailsubject = "HCSDiscord Authenitcation"
 
     emailmsg = MIMEMultipart()
