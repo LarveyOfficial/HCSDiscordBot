@@ -479,7 +479,7 @@ async def role(ctx, _role: str=None):
             else:
                 await ctx.send("That Role Dosen't Exist")
         else:
-            ctx.send("That Role Dosen't Exist")
+            await ctx.send("That Role Dosen't Exist")
 
 
 @bot.command()
