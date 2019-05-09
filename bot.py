@@ -13,9 +13,9 @@ bot = commands.Bot(command_prefix='$', case_insensitive=True)
 version = "Alpha 0.1.5"
 bot.remove_command('help')
 print("Loading....")
-owner_ids=[245653078794174465, 282565295351136256]
+owner_ids=[245653078794174465]
 gen = KajGenerator()
-role_list = ['Band', 'Super Smash Bros Players']
+role_list = ['Band', 'SSB', 'Minecraft']
 
 # lol don't touch this
 client = pymongo.MongoClient(config.uri)
@@ -275,7 +275,7 @@ async def make_new_channel(member):
 async def select_middle_school(member, channel):
     await log(member.name + " choose middleschool")
     await channel.send('-Saving (Middle School)')
-    roleid = 575633744204136469
+    roleid = 546025605221711882
     role_ = discord.utils.get(member.guild.roles, id=roleid)
     await member.add_roles(role_)
     their_code = gen_code()
@@ -315,7 +315,7 @@ async def verify(ctx, code: str=None):
             updated_tag = {"$set": {'verified': True, 'code': None}}
             user_col.update_one({'code': code, 'user_id': str(ctx.author.id)}, updated_tag)
             await ctx.author.send("Yeah Boi U got **Verified**!")
-            roleid = 573953106417680409
+            roleid = 576127240669233152
             role_ = discord.utils.get(ctx.guild.roles, id=roleid)
             await ctx.author.remove_roles(role_)
             channel = discord.utils.get(ctx.guild.text_channels, name=str(ctx.author.id))
@@ -382,7 +382,7 @@ async def select_high_school(member, channel):
                 await log(member.name + " Choose Freshmen... ew")
                 await msg2.edit(content='9th grade selected')
                 gradeselect = "9th"
-                roleid = 575633795512926218
+                roleid = 543060124600762406
                 role_ = discord.utils.get(member.guild.roles, id=roleid)
                 await member.add_roles(role_)
                 break
@@ -390,7 +390,7 @@ async def select_high_school(member, channel):
                 await log(member.name + " Choose Sophmore")
                 await msg2.edit(content='10th grade selected')
                 gradeselect = "10th"
-                roleid = 575633870511276042
+                roleid = 543060215646388224
                 role_ = discord.utils.get(member.guild.roles, id=roleid)
                 await member.add_roles(role_)
                 break
@@ -398,7 +398,7 @@ async def select_high_school(member, channel):
                 await log(member.name + " Choose Junior")
                 await msg2.edit(content='11th grade selected')
                 gradeselect = "11th"
-                roleid = 575633908910260224
+                roleid = 543060357191827478
                 role_ = discord.utils.get(member.guild.roles, id=roleid)
                 await member.add_roles(role_)
                 break
@@ -406,7 +406,7 @@ async def select_high_school(member, channel):
                 await log(member.name + " Choose Senior")
                 await msg2.edit(content='12th grade selected')
                 gradeselect = "12th"
-                roleid = 575633945937575936
+                roleid = 543060511441289216
                 role_ = discord.utils.get(member.guild.roles, id=roleid)
                 await member.add_roles(role_)
                 print(member.name + " Choose Senior")
@@ -429,7 +429,7 @@ async def select_high_school(member, channel):
 
 
 async def joinmsg(member):
-    welcome = discord.utils.get(member.guild.channels, id=int(573171504234233888))
+    welcome = discord.utils.get(member.guild.channels, id=int(543062297749487627))
     embed = discord.Embed(title="Member Joined", description=member.name, color=discord.Color.dark_blue())
     await welcome.send(embed=embed)
 
@@ -521,7 +521,7 @@ async def shutdown(ctx):
 
 
 async def giverole(member):
-    roleid = 573953106417680409
+    roleid = 576127240669233152
     role_ = discord.utils.get(member.guild.roles, id=roleid)
     await member.add_roles(role_)
     await log(member.name + "(" + str(member.id) + ") " + "has Joined the discord adding them to the role: " + str(role))
@@ -535,23 +535,25 @@ async def on_command_error(ctx, error):
 
 @bot.command()
 async def StartInitialSetup(ctx):
-    Msg = await ctx.send("Are you sure you want to continue?")
-    await Msg.add_reaction("🇾")
-    await Msg.add_reaction("🇳")
-    while True:
-        reaction4, react_member4 = await bot.wait_for('reaction_add')
-        if react_member4.id is ctx.author.id:
-            if reaction4.emoji == "🇾":
-                allmembers = bot.get_all_members()
-                await allmembers.send("Test")
-                break
+    if ctx.author.id in owner_ids:
+        Msg = await ctx.send("Are you sure you want to continue?")
+        await Msg.add_reaction("🇾")
+        await Msg.add_reaction("🇳")
+        while True:
+            reaction4, react_member4 = await bot.wait_for('reaction_add')
+            if react_member4.id is ctx.author.id:
+                if reaction4.emoji == "🇾":
+                    for x in bot.get_all_members():
+                        embed = MakeEmbed(title="HCS Discord Server", description="Hello," + x.mention + " Due to the new HCS Discord Bot! (Me),\n we have to have you go through new protocols\n This includes verification of you going to Hartland.\n Rejoin this server with this Link: INSERT LINK", doFooter=True)
+                        await x.send(embed=embed)
+                    break
 
-            elif reaction4.emoji == "🇳":
-                await ctx.send("N")
-                break
+                elif reaction4.emoji == "🇳":
+                    await ctx.send("N")
+                    break
 
-            else:
-                continue
+                else:
+                    continue
 
 async def purge_unverified():
     print("Initiated Inactive Loop")
