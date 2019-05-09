@@ -4,7 +4,7 @@ import discord, time, asyncio, pymongo, string, random, csv, smtplib
 from generator import KajGenerator
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
-from DiscordLog import DiscordLog
+import datetime
 if __name__ == '__main__':
     import config
 
@@ -16,7 +16,6 @@ print("Loading....")
 owner_ids=[245653078794174465, 282565295351136256]
 gen = KajGenerator()
 role_list = ['Band', 'Drama']
-kaj_log = DiscordLog()
 
 # lol don't touch this
 client = pymongo.MongoClient(config.uri)
@@ -26,7 +25,7 @@ user_col = hcs_db.users
 print('collected documents (' + str(user_col.count_documents({})) + ")")
 
 
-def sendemail(studentemail, emailcode):
+async def sendemail(studentemail, emailcode):
     body = "Your HCSDiscord Verification Code is \n\n" + str(emailcode)+"\n\nPlease use $verify "+str(emailcode)+ " in your setup channel\nYour code will Expire in 24hours\n\n" + "If you don't believe this was you please msg Larvey#0001 on Discord."
     emailsubject = "HCSDiscord Authenitcation"
 
@@ -40,10 +39,26 @@ def sendemail(studentemail, emailcode):
     emailserver = smtplib.SMTP(config.mailfromserver)
     emailserver.starttls()
     emailserver.login(config.mailfromAddress, config.mailfrompassword)
-    print("Sending Email....")
+    await log("Sending Email....")
     emailserver.sendmail(config.mailfromAddress, studentemail, message)
-    print("Email Sent to " + studentemail)
+    await log("Email Sent to " + studentemail)
     emailserver.quit()
+
+
+async def log(message):
+    if message is not None:
+        log_guild = bot.get_guild(config.log_guild)
+        log_channel = discord.utils.get(log_guild.channels, id=config.log_channel)
+        print(message)
+        await log_channel.send('['+str(datetime.datetime.utcnow())+'# INFO:] '+message)
+
+
+async def log_error(message):
+    if message is not None:
+        log_guild = bot.get_guild(config.log_guild)
+        log_channel = discord.utils.get(log_guild.channels, id=config.log_channel)
+        print('# ERROR:'+message)
+        await log_channel.send('['+str(datetime.datetime.utcnow())+'# ERROR:] '+message)
 
 
 def MakeEmbed(author=None, author_url=None, title=None, description=None, url=None, thumbnail=None, doFooter=False, color=None):
@@ -106,7 +121,7 @@ async def ticket(ctx, *, name:str = None):
         ticketcategory = discord.utils.get(ctx.guild.categories, name="tickets")
     ticketname = "ticket-{0}".format(ctx.author.id)
     ticketchannel = await ctx.guild.create_text_channel(ticketname, overwrites=overwrites, category=ticketcategory)
-    print(ctx.author.name + "Needs A Ticket..")
+    await log(ctx.author.name + "Needs A Ticket..")
     ticketembed = MakeEmbed(title="Ticket",description="Welcome" + ctx.author.name + "This is your Ticket!", doFooter=True)
     await ticketchannel.send(embed=ticketembed)
 
@@ -213,8 +228,8 @@ async def ping(ctx):
 async def purge_all(ctx):
     msg = await ctx.send('checking user...')
     if ctx.author.id in owner_ids:
-        print('owner requested purge of database')
-        print('purging...')
+        await log('owner requested purge of database')
+        await log('purging...')
         await msg.edit(content='purging...')
         user_col.delete_many({})
         await msg.edit(content='database purged!')
@@ -228,10 +243,9 @@ async def purge_all(ctx):
 
 @bot.event
 async def on_ready():
-    guilds = list(bot.guilds)
-    print("bot logged in with version: "+version)
-    print("Connected to " + str(len(bot.guilds)) + " server(s):")
-    print("Bot Connected to Gmail Servers")
+    await log("bot logged in with version: "+version)
+    await log("Connected to " + str(len(bot.guilds)) + " server(s):")
+    await log("Bot Connected to Gmail Servers")
     print('Started Status Loop')
     while True:
         a_name = gen.MakeUsername(1)
@@ -254,16 +268,16 @@ async def make_new_channel(member):
         category = discord.utils.get(member.guild.categories, name="Setup")
 
     channel = await member.guild.create_text_channel(str(member.id), overwrites=overwrites, category=category)
-    print("Creating new setup for " + str(member) + ".")
+    await log("Creating new setup for " + str(member) + ".")
     return channel
 
 
 async def select_middle_school(member, channel):
-    print(member.name + " choose middleschool, saving to file...")
+    await log(member.name + " choose middleschool")
     await channel.send('-Saving (Middle School)')
     roleid = 575633744204136469
-    role = discord.utils.get(member.guild.roles, id=roleid)
-    await member.add_roles(role)
+    role_ = discord.utils.get(member.guild.roles, id=roleid)
+    await member.add_roles(role_)
     their_code = gen_code()
     if not check_for_doc("user_id", str(member.id)):
         user_col.insert_one(make_doc(member.name, member.id, their_code, 'middle', None, False))
@@ -290,7 +304,6 @@ async def get_student_id(member, channel):
             else:
                 continue
         else:
-            print('not right')
             continue
 
 
@@ -303,23 +316,24 @@ async def verify(ctx, code: str=None):
             user_col.update_one({'code': code, 'user_id': str(ctx.author.id)}, updated_tag)
             await ctx.author.send("Yeah Boi U got **Verified**!")
             roleid = 573953106417680409
-            role = discord.utils.get(ctx.guild.roles, id=roleid)
-            await ctx.author.remove_roles(role)
+            role_ = discord.utils.get(ctx.guild.roles, id=roleid)
+            await ctx.author.remove_roles(role_)
             channel = discord.utils.get(ctx.guild.text_channels, name=str(ctx.author.id))
+            await joinmsg(ctx.author)
             if channel:
-                print(str(ctx.author.id) + " is verified, deleting their setup")
+                await log(str(ctx.author.id) + " is verified, deleting their setup")
                 await channel.delete()
 
 
 async def compare_id(channel, member, student_id):
-    print('started comparing')
+    await log('started comparing ids for {}'.format(member.name))
     confirmmsg = await channel.send('Searching for your Student ID...')
     with open('eggs.csv', newline='') as csvfile:
         csvReader = csv.reader(csvfile, delimiter=',')
         for row in csvReader:
             student_id9 = ''.join(filter(lambda x: x.isdigit(), row[30]))
             if str(student_id) in row[30] and len(str(student_id)) == 8:
-                print(row[30] + ' - ' + student_id9)
+                await log("student ID matched: "+row[30] + ' - ' + student_id9)
                 their_doc = user_col.find_one({'user_id': str(member.id)})
                 if their_doc is not None:
                     #print('verify using this... $verify '+ their_doc['code'])
@@ -333,13 +347,13 @@ async def compare_id(channel, member, student_id):
                         reaction3, react_member3 = await bot.wait_for('reaction_add')
                         if react_member3.id is member.id:
                             if reaction3.emoji == "🇾":
-                                print(member.name + " has confirmed that "+student_id+" is their student ID. Sending Email.")
-                                print("Email Address is: "+studentemail)
+                                await log(member.name + " has confirmed that "+student_id+" is their student ID. Sending Email.")
+                                await log("Email Address is: "+studentemail)
                                 await channel.send("We have sent you an email with a Verifiation Code to "+studentemail)
                                 sendemail(studentemail, emailcode)
                                 updated_tag = {"$set": {'student_id': str(student_id)}}
                                 user_col.update_one({'user_id': str(member.id)}, updated_tag)
-                                print('updated user id to be the user id they have so yeah. Now ima send an email. *dabs*')
+                                await log('updated user id to be the user id they have so yeah. Now ima send an email. *dabs*')
                                 return True
                             if reaction3.emoji == "🇳":
                                 await confirmmsg.edit(content="Not sending email. (In order to complete the setup, you will need to verify by email.)\nPlease type your student ID.")
@@ -348,7 +362,7 @@ async def compare_id(channel, member, student_id):
                                 await confirmmsg.remove_reaction("🇳", react_member3)
                                 return False
 
-        print('No ID Found(Welp.. Thats a Wrap)')
+        await log_error('No ID Found (Welp.. Thats a Wrap)')
         await confirmmsg.edit(content='Sorry, That ID was not Found. Please Try Again')
         return False
 
@@ -365,52 +379,50 @@ async def select_high_school(member, channel):
         reaction2, react_member2 = await bot.wait_for('reaction_add')
         if react_member2.id is member.id:
             if reaction2.emoji == "🇦":
-                print(member.name + " Choose Freshmen... ew")
+                await log(member.name + " Choose Freshmen... ew")
                 await msg2.edit(content='9th grade selected')
                 gradeselect = "9th"
                 roleid = 575633795512926218
-                role = discord.utils.get(member.guild.roles, id=roleid)
-                await member.add_roles(role)
+                role_ = discord.utils.get(member.guild.roles, id=roleid)
+                await member.add_roles(role_)
                 break
             elif reaction2.emoji == "🇧":
-                print(member.name + " Choose Sophmore")
+                await log(member.name + " Choose Sophmore")
                 await msg2.edit(content='10th grade selected')
                 gradeselect = "10th"
                 roleid = 575633870511276042
-                role = discord.utils.get(member.guild.roles, id=roleid)
-                await member.add_roles(role)
+                role_ = discord.utils.get(member.guild.roles, id=roleid)
+                await member.add_roles(role_)
                 break
             elif reaction2.emoji == "🇨":
-                print(member.name + " Choose Junior")
+                await log(member.name + " Choose Junior")
                 await msg2.edit(content='11th grade selected')
                 gradeselect = "11th"
                 roleid = 575633908910260224
-                role = discord.utils.get(member.guild.roles, id=roleid)
-                await member.add_roles(role)
+                role_ = discord.utils.get(member.guild.roles, id=roleid)
+                await member.add_roles(role_)
                 break
             elif reaction2.emoji == "🇩":
-                print(member.name + " Choose Senior")
+                await log(member.name + " Choose Senior")
                 await msg2.edit(content='12th grade selected')
                 gradeselect = "12th"
                 roleid = 575633945937575936
-                role = discord.utils.get(member.guild.roles, id=roleid)
-                await member.add_roles(role)
+                role_ = discord.utils.get(member.guild.roles, id=roleid)
+                await member.add_roles(role_)
                 print(member.name + " Choose Senior")
                 break
             else:
-                print("not right emoji")
                 continue
         else:
-            print("not right user")
             continue
 
-    print("generating code...")
+    await log("generating code...")
     their_code = gen_code()
-    print("generated code: " + str(their_code))
+    await log("generated code: " + str(their_code))
     if not check_for_doc("user_id", str(member.id)):
-        print("saving...")
+        await log("saving...")
         user_col.insert_one(make_doc(member.name, member.id, their_code, gradeselect, None, False))
-        print("saved.")
+        await log("saved.")
         await get_student_id(member, channel)
 
         # send code to email?
@@ -424,12 +436,12 @@ async def joinmsg(member):
 
 async def playerjoin(member):
     if check_for_doc('user_id', str(member.id), 'verified', True):
-        print("user is already registered")
+        await log("user {} joined. but is already registered".format(member.name))
         return
     else:
         await giverole(member)
 
-    print('New player joined... Making Setup Room')
+    await log('New player joined... Making Setup Room')
     channel = await make_new_channel(member)
 
     msg = await channel.send("**Welcome " + str(member) + " to the HCS Discord Server!**\n\n__Lets Start the Setup!__ \n*Step one:* Are you from the High School, or the Middle School? React Acordingly.")
@@ -460,7 +472,7 @@ async def role(ctx, _role: str=None):
         get_role = discord.utils.get(ctx.guild.roles, name=_role)
         if get_role is not None:
             await ctx.author.add_roles(get_role)
-            print("Adding " + str(ctx.author) + " To Role: " + str(get_role))
+            await log("Adding " + str(ctx.author) + " To Role: " + str(get_role))
             embedconfirm = MakeEmbed(title="Added you to Role:", description=str(get_role), doFooter=True)
             await ctx.send(embed=embedconfirm)
         else:
@@ -476,12 +488,12 @@ async def rmrole(ctx, _role: str=None):
         get_role = discord.utils.get(ctx.guild.roles, name=_role)
         if get_role is not None and get_role in ctx.author.roles:
             await ctx.author.remove_roles(get_role)
-            print("Removing " + str(ctx.author) + " From Role: " + str(get_role))
+            await log("Removing " + str(ctx.author) + " From Role: " + str(get_role))
             embedconfirm = MakeEmbed(title="Removed you From Role:", description=str(get_role), doFooter=True)
             await ctx.send(embed=embedconfirm)
         else:
             embederror = MakeEmbed(title="ERROR", description="You don't have that Role!", doFooter=True, color=discord.Color.dark_red())
-            await ctx.send("You don't have that Role")
+            await ctx.send(embed=embederror)
 
 
 @bot.event
@@ -492,32 +504,31 @@ async def on_member_remove(member):
     channel = discord.utils.get(member.guild.text_channels, name=str(member.id))
     if channel:
 
-        print(str(member.id) +" left, deleting their setup")
+        await log(str(member.id) + " left, deleting their setup")
         await channel.delete()
 
 
 @bot.command()
 async def shutdown(ctx):
     if ctx.author.id in owner_ids:
-        print(ctx.author.name + ' (' + str(ctx.author.id) + ')' + ' has requested a shutdown.')
-        print('Shutting down')
+        await log(ctx.author.name + ' (' + str(ctx.author.id) + ')' + ' has requested a shutdown.')
+        await log('Shutting down')
         await ctx.send(":wave::wave:")
         await bot.change_presence(status='offline')
         await bot.logout()
     else:
-        print(ctx.author.name + ' (' + str(ctx.author.id) + ')' + ' has requested a shutdown.')
-        print('But they do not have enough permissions')
+        await log_error(ctx.author.name + ' (' + str(ctx.author.id) + ')' + ' has requested a shutdown. But they do not have enough permissions')
 
 
 async def giverole(member):
     roleid = 573953106417680409
-    role = discord.utils.get(member.guild.roles, id=roleid)
-    await member.add_roles(role)
-    print(member.name + "(" + str(member.id) + ") " + "has Joined the discord adding them to the role: " + str(role))
+    role_ = discord.utils.get(member.guild.roles, id=roleid)
+    await member.add_roles(role_)
+    await log(member.name + "(" + str(member.id) + ") " + "has Joined the discord adding them to the role: " + str(role))
 
 
 async def purge_unverified():
-    print('purge loop started')
+    await log('purge loop started')
     while not bot.is_closed():
         await asyncio.sleep(60*60*24)
         accounts_deleted = 0
@@ -530,7 +541,7 @@ async def purge_unverified():
                 accounts_deleted = accounts_deleted+1
                 user_col.delete_many({'user_id': str(a_member.id)})
 
-        print("deleted {} unverified users".format(str(accounts_deleted)))
+        await log("deleted {} unverified users".format(str(accounts_deleted)))
 
 
 @bot.event
@@ -538,7 +549,6 @@ async def on_member_join(member):
     if member.id==bot.user.id:
         return
     await playerjoin(member)
-    await joinmsg(member)
 
 
 bot.loop.create_task(purge_unverified())
