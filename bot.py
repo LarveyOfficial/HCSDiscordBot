@@ -349,7 +349,7 @@ async def compare_id(channel, member, student_id):
                             if reaction3.emoji == "🇾":
                                 await log(member.name + " has confirmed that "+student_id+" is their student ID. Sending Email.")
                                 await log("Email Address is: "+studentemail)
-                                await channel.send("We have sent you an email with a Verifiation Code to "+studentemail)
+                                await channel.send("We have sent you an email with a Verifiation Code to "+studentemail+"Please use $verify <VERIFICATION CODE>")
                                 await sendemail(studentemail, emailcode)
                                 updated_tag = {"$set": {'student_id': str(student_id)}}
                                 user_col.update_one({'user_id': str(member.id)}, updated_tag)
@@ -444,7 +444,7 @@ async def playerjoin(member):
     await log('New player joined... Making Setup Room')
     channel = await make_new_channel(member)
 
-    msg = await channel.send("**Welcome " + str(member) + " to the HCS Discord Server!**\n\n__Lets Start the Setup!__ \n*Step one:* Are you from the High School, or the Middle School? React Acordingly.")
+    msg = await channel.send("**Welcome " + str(member) + " to the HCS Discord Server!**\n\n__Lets Start the Setup!__ \n*Step one:* Are you from the High School, or the Middle School? React Accordingly.")
     await msg.add_reaction("🇭")
     await msg.add_reaction("🇲")
 
