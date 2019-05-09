@@ -267,7 +267,6 @@ async def select_middle_school(member, channel):
     their_code = gen_code()
     if not check_for_doc("user_id", str(member.id)):
         user_col.insert_one(make_doc(member.name, member.id, their_code, 'middle', None, False))
-        hasverifed(verified = False)
         await get_student_id(member, channel)
 
         # send code to email?
@@ -306,7 +305,6 @@ async def verify(ctx, code: str=None):
             roleid = 573953106417680409
             role = discord.utils.get(ctx.guild.roles, id=roleid)
             await ctx.author.remove_roles(role)
-            hasverifed(verified = True)
             channel = discord.utils.get(ctx.guild.text_channels, name=str(ctx.author.id))
             if channel:
                 print(str(ctx.author.id) + " is verified, deleting their setup")
@@ -412,7 +410,6 @@ async def select_high_school(member, channel):
     if not check_for_doc("user_id", str(member.id)):
         print("saving...")
         user_col.insert_one(make_doc(member.name, member.id, their_code, gradeselect, None, False))
-        hasverifed(verified = False)
         print("saved.")
         await get_student_id(member, channel)
 
