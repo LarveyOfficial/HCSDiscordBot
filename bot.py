@@ -15,7 +15,7 @@ bot.remove_command('help')
 print("Loading....")
 owner_ids=[245653078794174465, 282565295351136256]
 gen = KajGenerator()
-role_list = ['Band', 'Drama']
+role_list = ['Band', 'Super Smash Bros Players']
 
 # lol don't touch this
 client = pymongo.MongoClient(config.uri)
@@ -350,7 +350,7 @@ async def compare_id(channel, member, student_id):
                                 await log(member.name + " has confirmed that "+student_id+" is their student ID. Sending Email.")
                                 await log("Email Address is: "+studentemail)
                                 await channel.send("We have sent you an email with a Verifiation Code to "+studentemail)
-                                sendemail(studentemail, emailcode)
+                                await sendemail(studentemail, emailcode)
                                 updated_tag = {"$set": {'student_id': str(student_id)}}
                                 user_col.update_one({'user_id': str(member.id)}, updated_tag)
                                 await log('updated user id to be the user id they have so yeah. Now ima send an email. *dabs*')
