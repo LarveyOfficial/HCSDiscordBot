@@ -15,7 +15,7 @@ bot.remove_command('help')
 print("Loading....")
 owner_ids=[245653078794174465]
 gen = KajGenerator()
-role_list = ['Band', 'SSB', 'Minecraft', 'BedWars', 'Communist']
+role_list = ['band', 'ssb', 'minecraft', 'bedwars', 'communist']
 
 # lol don't touch this
 client = pymongo.MongoClient(config.uri)
@@ -469,7 +469,7 @@ async def role(ctx, _role: str=None):
         embed = MakeEmbed(title="List of Roles:", description=(', '.join(role_list)),doFooter=True)
         await ctx.send(embed=embed)
     else:
-        if _role in role_list:
+        if _role.lower() in role_list:
             get_role = discord.utils.get(ctx.guild.roles, name=_role)
             if get_role is not None:
                 await ctx.author.add_roles(get_role)
