@@ -15,7 +15,7 @@ bot.remove_command('help')
 print("Loading....")
 owner_ids=[245653078794174465]
 gen = KajGenerator()
-role_list = ['Band', 'SSB', 'Minecraft']
+role_list = ['Band', 'SSB', 'Minecraft', 'BedWars']
 
 # lol don't touch this
 client = pymongo.MongoClient(config.uri)
