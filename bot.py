@@ -4,6 +4,7 @@ import discord, time, asyncio, pymongo, string, random, csv, smtplib
 from generator import KajGenerator
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
+from DiscordLog import DiscordLog
 if __name__ == '__main__':
     import config
 
@@ -15,6 +16,7 @@ print("Loading....")
 owner_ids=[245653078794174465, 282565295351136256]
 gen = KajGenerator()
 role_list = ['Band', 'Drama']
+kaj_log = DiscordLog()
 
 # lol don't touch this
 client = pymongo.MongoClient(config.uri)
@@ -542,5 +544,5 @@ async def on_member_join(member):
     await joinmsg(member)
 
 
-bot.loop.create_task(purge_unverified)
+bot.loop.create_task(purge_unverified())
 bot.run(config.TOKEN)
