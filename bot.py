@@ -561,24 +561,25 @@ async def identify(ctx, name: discord.Member=None):
                 nouser = MakeEmbed(title="ERROR", description="User does not Exist.")
                 await ctx.send(embed=nouser)
             else:
-                print("Finding it")
-                studentid = discord.utils.get(bot.get_user(name.id), name=userid['student_id'])
-                print(studentid)
-                print("found it")
-                with open('eggs.csv', newline='') as csvfile:
-                    print("csv open")
-                    csvReader = csv.reader(csvfile, delimiter=',')
-                    for row in csvReader:
-                        print("doing student_id9")
-                        student_id12 = ''.join(filter(lambda x: x.isdigit(), row[30]))
-                        print(student_id12)
-                        if str(student_id12) in row[30] and str(student_id12) == str(studentid) and len == 8:
-                            print("OOGA BOOGA")
-                            await log("student ID matched: " + row[1] + ' - ' + student_id12)
-                            studentname=MakeEmbed(title="Identify", description=name+"'s name is "+row[1])
-                            await ctx.send(embed=studentname)
-                        else:
-                            print(" Odd")
+                for doc in userid:
+                    print("Finding it")
+                    studentid = discord.utils.get(bot.get_all_members(), id=int(doc['student_id']))
+                    print(studentid)
+                    print("found it")
+                    with open('eggs.csv', newline='') as csvfile:
+                        print("csv open")
+                        csvReader = csv.reader(csvfile, delimiter=',')
+                        for row in csvReader:
+                            print("doing student_id9")
+                            student_id12 = ''.join(filter(lambda x: x.isdigit(), row[30]))
+                            print(student_id12)
+                            if str(student_id12) in row[30] and str(student_id12) == str(studentid) and len == 8:
+                                print("OOGA BOOGA")
+                                await log("student ID matched: " + row[1] + ' - ' + student_id12)
+                                studentname=MakeEmbed(title="Identify", description=name+"'s name is "+row[1])
+                                await ctx.send(embed=studentname)
+                            else:
+                                print(" Odd")
 
         else:
             nouser=MakeEmbed(title="ERROR", description="User does not Exist.")
