@@ -124,7 +124,7 @@ async def ticket(ctx, *, name:str = None):
         await ctx.send(embed=embed)
         ticketchannel = await ctx.guild.create_text_channel(ticketname, overwrites=overwrites, category=ticketcategory)
         await log(ctx.author.name + "Needs A Ticket..")
-        ticketembed = MakeEmbed(title="Ticket",description="Welcome" + ctx.author.name + " This is your Ticket! <@&543060916086767617>", doFooter=True)
+        ticketembed = MakeEmbed(title="Ticket",description="Welcome " + ctx.author.name + " This is your Ticket! <@&543060916086767617>", doFooter=True)
         await ticketchannel.send(embed=ticketembed)
     else:
         ticketExists = MakeEmbed(title="ERROR",description="You already have a ticket open!", doFooter=True, color = discord.Color.dark_red())
