@@ -126,7 +126,7 @@ async def ticket(ctx, *, name:str = None):
         ticketembed = MakeEmbed(title="Ticket",description="Welcome" + ctx.author.name + " This is your Ticket! <@&543060916086767617>", doFooter=True)
         await ticketchannel.send(embed=ticketembed)
     else:
-        ticketExists = MakeEmbed(title="ERROR",description="You already have a ticket open!", doFooter=True, color = discord.color.dark_red())
+        ticketExists = MakeEmbed(title="ERROR",description="You already have a ticket open!", doFooter=True, color = discord.Color.dark_red())
         await ctx.send(embed=ticketExists)
 
 
