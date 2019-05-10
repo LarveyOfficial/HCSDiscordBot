@@ -436,7 +436,7 @@ async def joinmsg(member):
 
 
 async def playerjoin(member):
-    checkdoc = user_col.find_one({'user_id': str(member.id), 'verified': True})
+    checkdoc = user_col.find_one({'user_id', str(member.id), 'verified', True})
     if checkdoc is not None or member.id == 282565295351136256:
         grade_role = discord.utils.get(member.guild.roles, name=checkdoc['grade'])
         if grade_role is not None:
