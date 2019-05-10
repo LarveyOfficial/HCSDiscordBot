@@ -108,8 +108,6 @@ def check_for_doc(check_key, check_val, check_key2=None, check_val2=None):
 
 @bot.command()
 async def ticket(ctx, *, name:str = None):
-    embed = MakeEmbed(title="Ticket", description="Making your Ticket...", doFooter=True)
-    await ctx.send(embed=embed)
     overwrites = {
         ctx.guild.default_role: discord.PermissionOverwrite(read_messages=False),
         ctx.author: discord.PermissionOverwrite(read_messages=True),
@@ -120,8 +118,10 @@ async def ticket(ctx, *, name:str = None):
         await ctx.guild.create_category_channel(name="tickets")
         ticketcategory = discord.utils.get(ctx.guild.categories, name="tickets")
     ticketname = "ticket-{0}".format(ctx.author.id)
-    ticketchannel = await ctx.guild.create_text_channel(ticketname, overwrites=overwrites, category=ticketcategory)
     if not ticketchannel:
+        embed = MakeEmbed(title="Ticket", description="Making your Ticket...", doFooter=True)
+        await ctx.send(embed=embed)
+        ticketchannel = await ctx.guild.create_text_channel(ticketname, overwrites=overwrites, category=ticketcategory)
         await log(ctx.author.name + "Needs A Ticket..")
         ticketembed = MakeEmbed(title="Ticket",description="Welcome" + ctx.author.name + " This is your Ticket! <@&543060916086767617>", doFooter=True)
         await ticketchannel.send(embed=ticketembed)
