@@ -546,26 +546,43 @@ async def on_command_error(ctx, error):
 
 
 @bot.command()
-async def StartInitialSetup(ctx):
-    if ctx.author.id in owner_ids:
-        Msg = await ctx.send("Are you sure you want to continue?")
-        await Msg.add_reaction("🇾")
-        await Msg.add_reaction("🇳")
-        while True:
-            reaction4, react_member4 = await bot.wait_for('reaction_add')
-            if react_member4.id is ctx.author.id:
-                if reaction4.emoji == "🇾":
-                    for x in bot.get_all_members():
-                        embed = MakeEmbed(title="HCS Discord Server", description="Hello," + x.mention + " Due to the new HCS Discord Bot! (Me).\n We have to have you go through new protocols.\n This includes verification of you going to Hartland.\n Rejoin this server with this Link: "+ config.invite_url, doFooter=True)
-                        await x.send(embed=embed)
-                    break
+async def identify(ctx, name: discord.Member=None):
+    if name is None:
+        embed=MakeEmbed(title="Identify", description="Use $identify to identify somones name.")
+        await ctx.send(embed=embed)
+        print("None")
+    else:
+        print("else1")
+        if name.id:
+            userid = user_col.find_one({'user_id': str(name.id)})
+            print("Found one")
+            if userid is None:
+                print("error")
+                nouser = MakeEmbed(title="ERROR", description="User does not Exist.")
+                await ctx.send(embed=nouser)
+            else:
+                print("Finding it")
+                studentid = discord.utils.get(bot.get_user(name.id), name=userid['student_id'])
+                print(studentid)
+                print("found it")
+                with open('eggs.csv', newline='') as csvfile:
+                    print("csv open")
+                    csvReader = csv.reader(csvfile, delimiter=',')
+                    for row in csvReader:
+                        print("doing student_id9")
+                        student_id12 = ''.join(filter(lambda x: x.isdigit(), row[30]))
+                        print(student_id12)
+                        if str(student_id12) in row[30] and str(student_id12) == str(studentid) and len == 8:
+                            print("OOGA BOOGA")
+                            await log("student ID matched: " + row[1] + ' - ' + student_id12)
+                            studentname=MakeEmbed(title="Identify", description=name+"'s name is "+row[1])
+                            await ctx.send(embed=studentname)
+                        else:
+                            print(" Odd")
 
-                elif reaction4.emoji == "🇳":
-                    await ctx.send("N")
-                    break
-
-                else:
-                    continue
+        else:
+            nouser=MakeEmbed(title="ERROR", description="User does not Exist.")
+            ctx.send(embed=nouser)
 
 async def purge_unverified():
     print("Initiated Inactive Loop")
