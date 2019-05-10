@@ -389,7 +389,7 @@ async def select_high_school(member, channel):
             elif reaction2.emoji == "🇧":
                 await log(member.name + " Choose Sophmore")
                 await msg2.edit(content='10th grade selected')
-                gradeselect = "Sophmore"
+                gradeselect = "Sophomore"
                 roleid = 543060215646388224
                 role_ = discord.utils.get(member.guild.roles, id=roleid)
                 await member.add_roles(role_)
