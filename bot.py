@@ -118,7 +118,8 @@ async def ticket(ctx, *, name:str = None):
         await ctx.guild.create_category_channel(name="tickets")
         ticketcategory = discord.utils.get(ctx.guild.categories, name="tickets")
     ticketname = "ticket-{0}".format(ctx.author.id)
-    if not ticketchannel:
+    ticketchannelmade = discord.utils.get(ctx.guild.channels, name=ticketname)
+    if not ticketchannelmade:
         embed = MakeEmbed(title="Ticket", description="Making your Ticket...", doFooter=True)
         await ctx.send(embed=embed)
         ticketchannel = await ctx.guild.create_text_channel(ticketname, overwrites=overwrites, category=ticketcategory)
