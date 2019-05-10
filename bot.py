@@ -381,7 +381,7 @@ async def select_high_school(member, channel):
             if reaction2.emoji == "🇦":
                 await log(member.name + " Choose Freshmen... ew")
                 await msg2.edit(content='9th grade selected')
-                gradeselect = "9th"
+                gradeselect = "Freshmen"
                 roleid = 543060124600762406
                 role_ = discord.utils.get(member.guild.roles, id=roleid)
                 await member.add_roles(role_)
@@ -389,7 +389,7 @@ async def select_high_school(member, channel):
             elif reaction2.emoji == "🇧":
                 await log(member.name + " Choose Sophmore")
                 await msg2.edit(content='10th grade selected')
-                gradeselect = "10th"
+                gradeselect = "Sophmore"
                 roleid = 543060215646388224
                 role_ = discord.utils.get(member.guild.roles, id=roleid)
                 await member.add_roles(role_)
@@ -397,7 +397,7 @@ async def select_high_school(member, channel):
             elif reaction2.emoji == "🇨":
                 await log(member.name + " Choose Junior")
                 await msg2.edit(content='11th grade selected')
-                gradeselect = "11th"
+                gradeselect = "Junior"
                 roleid = 543060357191827478
                 role_ = discord.utils.get(member.guild.roles, id=roleid)
                 await member.add_roles(role_)
@@ -405,7 +405,7 @@ async def select_high_school(member, channel):
             elif reaction2.emoji == "🇩":
                 await log(member.name + " Choose Senior")
                 await msg2.edit(content='12th grade selected')
-                gradeselect = "12th"
+                gradeselect = "Senior"
                 roleid = 543060511441289216
                 role_ = discord.utils.get(member.guild.roles, id=roleid)
                 await member.add_roles(role_)
@@ -435,7 +435,11 @@ async def joinmsg(member):
 
 
 async def playerjoin(member):
-    if check_for_doc('user_id', str(member.id), 'verified', True):
+    checkdoc = user_col.find_one({'user_id', str(member.id), 'verified', True})
+    if checkdoc is not None:
+        grade_role = discord.utils.get(member.guild.roles, name=checkdoc['grade'])
+        if grade_role is not None:
+            await member.add_roles(grade_role)
         await log("user {} joined. but is already registered".format(member.name))
         return
     else:
