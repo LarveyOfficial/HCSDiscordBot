@@ -195,7 +195,7 @@ async def close(ctx):
 @bot.group()
 async def help(ctx):
     if ctx.invoked_subcommand is None:
-        embed = MakeEmbed(title="Help", description="The following commands can be used by anyone:\n-role\n-rmrole\n-ping\n-ticket\n-help <command>",doFooter=True)
+        embed = MakeEmbed(title="Help", description="The following commands can be used by anyone:\n-role\n-rmrole\n-ping\n-ticket\n-identify\n-help <command>",doFooter=True)
         await ctx.send(embed=embed)
 
 
@@ -214,6 +214,11 @@ async def rmrole(ctx):
 @help.command()
 async def ping(ctx):
     embed = MakeEmbed(title="Help - Ping", description="$ping to check bots ping.", doFooter=True)
+    await ctx.send(embed=embed)
+
+@help.command()
+async def identify(ctx):
+    embed = MakeEmbed(title="Help - Identify", description="$identify <member> to see a user's real name.", doFooter=True)
     await ctx.send(embed=embed)
 
 
