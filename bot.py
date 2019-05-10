@@ -247,7 +247,6 @@ async def on_ready():
     await log("Connected to " + str(len(bot.guilds)) + " server(s):")
     await log("Bot Connected to Gmail Servers")
     print('Started Status Loop')
-    await log(config.invite_url)
     while True:
         a_name = gen.MakeUsername(1)
         a_name[0] = a_name[0].replace('_', ' ')
@@ -437,7 +436,7 @@ async def joinmsg(member):
 
 async def playerjoin(member):
     checkdoc = user_col.find_one({'user_id', str(member.id), 'verified', True})
-    if checkdoc is not None or member.id == 282565295351136256:
+    if checkdoc is not None:
         grade_role = discord.utils.get(member.guild.roles, name=checkdoc['grade'])
         if grade_role is not None:
             await member.add_roles(grade_role)
