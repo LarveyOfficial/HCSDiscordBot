@@ -258,10 +258,10 @@ async def on_ready():
     await log("Bot Connected to Gmail Servers")
     print('Started Status Loop')
     while True:
-        a_name = gen.MakeUsername(1)
-        a_name[0] = a_name[0].replace('_', ' ')
-        await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.watching, name=a_name[0]))
-        print('changed name to '+ a_name[0])
+        guild = bot.get_guild(config.guild_id)
+        people = random.choice(guild.members)
+        await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.watching, name=people.name))
+        print('Changes Status To '+ people.name)
         await asyncio.sleep(60)
 
 
