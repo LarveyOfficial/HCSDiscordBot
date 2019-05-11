@@ -1,7 +1,6 @@
 from __future__ import print_function
 from discord.ext import commands
 import discord, time, asyncio, pymongo, string, random, csv, smtplib
-from generator import KajGenerator
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 import datetime
