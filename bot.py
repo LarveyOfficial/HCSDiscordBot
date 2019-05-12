@@ -106,10 +106,12 @@ def check_for_doc(check_key, check_val, check_key2=None, check_val2=None):
 
 @bot.command()
 async def ticket(ctx, *, name:str = None):
+    adminrole = discord.utils.get(ctx.guild.roles, id = 543060916086767617)
     overwrites = {
         ctx.guild.default_role: discord.PermissionOverwrite(read_messages=False),
         ctx.author: discord.PermissionOverwrite(read_messages=True),
         bot.user: discord.PermissionOverwrite(read_messages=True),
+        adminrole: discord.PermissionOverwrite(read_messages=True),
     }
     ticketcategory = discord.utils.get(ctx.guild.categories, name="tickets")
     if not ticketcategory:
