@@ -324,7 +324,6 @@ async def verify(ctx, code: str=None):
         if doc is not None:
             updated_tag = {"$set": {'verified': True, 'code': None}}
             user_col.update_one({'code': code, 'user_id': str(ctx.author.id)}, updated_tag)
-            await ctx.author.send("Yeah Boi U got **Verified**!")
             roleid = 576127240669233152
             role_ = discord.utils.get(ctx.guild.roles, id=roleid)
             await ctx.author.remove_roles(role_)
