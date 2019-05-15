@@ -358,7 +358,7 @@ async def compare_id(channel, member, student_id):
                             if reaction3.emoji == "🇾":
                                 await log(member.name + " has confirmed that "+student_id+" is their student ID. Sending Email.")
                                 await log("Email Address is: "+studentemail)
-                                await channel.send("We have sent you an email with a Verifiation Code to "+studentemail+" Please use $verify <VERIFICATION CODE>")
+                                await channel.send("We have sent you an email with a Verifiation Code to "+studentemail+" Please use $verify + Your Code, email may take up to 2 minutes to send.")
                                 await sendemail(studentemail, emailcode)
                                 updated_tag = {"$set": {'student_id': str(student_id)}}
                                 user_col.update_one({'user_id': str(member.id)}, updated_tag)
