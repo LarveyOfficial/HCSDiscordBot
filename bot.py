@@ -13,7 +13,7 @@ version = "Release 1.2.1"
 bot.remove_command('help')
 print("Loading....")
 owner_ids=[245653078794174465]
-role_list = ['band', 'ssb', 'minecraft', 'bedwars', 'communist', 'art', 'languages', 'gamer']
+role_list = ['band', 'ssb', 'minecraft', 'bedwars', 'communist', 'art', 'languages', 'gamer', 'ping']
 
 # lol don't touch this
 client = pymongo.MongoClient(config.uri)
