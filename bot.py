@@ -111,12 +111,12 @@ async def event(ctx):
     if the_doc['event'] is True:
         member = str(ctx.author)
         embed = MakeEmbed(title="Event", description="Ok! Adding you to the Event!", doFooter=True)
-        eventlog = discord.utils.get(ctx.guild.channels, id=int(580346329817939989))
+        eventlog = discord.utils.get(ctx.guild.channels, id=int(580207666614501386))
         eventembed = MakeEmbed(title="Spectator Joined", description=member + " Has joined the Event!", doFooter=True)
         await ctx.send(embed=embed)
         await eventlog.send(embed=eventembed)
-        spectatorrole= discord.utils.get(ctx.guild.roles, id = int(580346443752144896))
-        applicationrole=discord.utils.get(ctx.guild.roles, id = int(580376459596660736))
+        spectatorrole= discord.utils.get(ctx.guild.roles, id = int(580206347782455297))
+        applicationrole=discord.utils.get(ctx.guild.roles, id = int(580395362309636102))
         await ctx.author.add_roles(applicationrole)
         await ctx.author.add_roles(spectatorrole)
         await log(member + " has Joined the Event!")
@@ -130,19 +130,19 @@ async def addplayer(ctx, name: discord.Member=None):
             print(str(name))
             embed=MakeEmbed(title="Add Player", description="Adding " + str(name.mention) + " to the player role.")
             await ctx.send(embed=embed)
-            playerrole = discord.utils.get(ctx.guild.roles, id=int(580368602469761036))
+            playerrole = discord.utils.get(ctx.guild.roles, id=int(580209037409517569))
             await name.add_roles(playerrole)
 @bot.command()
 async def appdone(ctx):
-    if ctx.channel is discord.utils.get(ctx.guild.channels, id=int(580376411705966603)):
+    if ctx.channel is discord.utils.get(ctx.guild.channels, id=int(580395742020108308)):
         username=str(ctx.author)
-        applicationrole=discord.utils.get(ctx.guild.roles, id = int(580376459596660736))
-        roleid = 580346443752144896
+        applicationrole=discord.utils.get(ctx.guild.roles, id = int(580395362309636102))
+        roleid = 580395362309636102
         if roleid in [y.id for y in ctx.author.roles]:
             embed=MakeEmbed(title="Application Done", description="Ok Informing Coordinators about your Application!", doFooter=True)
             await ctx.send(embed=embed)
-            eventlog = discord.utils.get(ctx.guild.channels, id=int(580346329817939989))
-            await eventlog.send("<@&580346464786710538>")
+            eventlog = discord.utils.get(ctx.guild.channels, id=int(580207666614501386))
+            await eventlog.send("<@&580205868856115230>")
             mentionembed=MakeEmbed(title="Application Finished",description=username + " has finished his Application.")
             await eventlog.send(embed=mentionembed)
             await ctx.author.remove_roles(applicationrole)
@@ -156,9 +156,11 @@ async def finishevent(ctx):
     if ctx.author.id in eventcoordinators:
         embed=MakeEmbed(title="Finish Event", description="Removing all Members from the Event Role", doFooter=True)
         await ctx.send(embed=embed)
-        role = discord.utils.get(ctx.guild.roles, id = int(580346443752144896))
+        role = discord.utils.get(ctx.guild.roles, id = int(580206347782455297))
+        approle = discord.utils.get(ctx.guild.roles, id = int(580395362309636102))
         for member in ctx.guild.members:
             await member.remove_roles(role)
+            await member.remove_roles(approle)
     else:
         return
 
