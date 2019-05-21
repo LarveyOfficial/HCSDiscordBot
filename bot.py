@@ -165,6 +165,52 @@ async def finishevent(ctx):
     else:
         return
 
+@bot.command()
+async def eventclose(ctx):
+    if ctx.author.id in owner_ids:
+        the_doc = user_col.find_one({'user_name': "Larvey"})
+        if the_doc['event'] is True:
+            embed=MakeEmbed(title="Closing Event", description="Closing the event.", doFooter=True)
+            embed2=MakeEmbed(title="Event Closed", description="Event Closed!", doFooter=True)
+            msg = await ctx.send(embed=embed)
+            itstrue = { 'event': True }
+            nowitsfalse = { "$set": { 'event': False } }
+            try:
+                await msg.delete()
+                await ctx.send(embed=embed2)
+                user_col.update_one(itstrue, nowitsfalse)
+            except:
+                await msg.delete()
+                errorclosing = MakeEmbed(title="ERROR", description="Error on Closing Event!", color=discord.Color.dark_red(), doFooter=True)
+                await ctx.send(embed=errorclosing)
+
+        else:
+            error=MakeEmbed(title="ERROR", description="The event is already Closed!", color=discord.Color.dark_red(), doFooter=True)
+            await ctx.send(embed=error)
+
+@bot.command()
+async def eventopen(ctx):
+    if ctx.author.id in owner_ids:
+        the_doc = user_col.find_one({'user_name': "Larvey"})
+        if the_doc['event'] is False:
+            embed=MakeEmbed(title="Openning Event", description="Opening the event.", doFooter=True)
+            embed2=MakeEmbed(title="Event Opened", description="Event Opened!", doFooter=True)
+            msg = await ctx.send(embed=embed)
+            itsfalse = { 'event': False }
+            nowitsTrue = { "$set": { 'event': True } }
+            try:
+                await msg.delete()
+                await ctx.send(embed=embed2)
+                user_col.update_one(itsfalse, nowitsTrue)
+            except:
+                await msg.delete()
+                erroropen = MakeEmbed(title="ERROR", description="Error on Opening Event!", color=discord.Color.dark_red(), doFooter=True)
+                await ctx.send(embed=erroropen)
+
+        else:
+            error=MakeEmbed(title="ERROR", description="The event is already Open!", color=discord.Color.dark_red(), doFooter=True)
+            await ctx.send(embed=error)
+
 
 @bot.command()
 async def ticket(ctx, *, name:str = None):
