@@ -13,6 +13,7 @@ version = "Release 1.2.1"
 bot.remove_command('help')
 print("Loading....")
 owner_ids=[245653078794174465]
+eventcoordinators=[467515585270513674, 245653078794174465]
 role_list = ['band', 'ssb', 'minecraft', 'bedwars', 'communist', 'art', 'languages', 'gamer', 'ping']
 
 # lol don't touch this
@@ -102,6 +103,64 @@ def check_for_doc(check_key, check_val, check_key2=None, check_val2=None):
             return True
         else:
             return False
+
+
+@bot.command()
+async def event(ctx):
+    the_doc = user_col.find_one({'user_name': "Larvey"})
+    if the_doc['event'] is True:
+        member = str(ctx.author)
+        embed = MakeEmbed(title="Event", description="Ok! Adding you to the Event!", doFooter=True)
+        eventlog = discord.utils.get(ctx.guild.channels, id=int(580346329817939989))
+        eventembed = MakeEmbed(title="Spectator Joined", description=member + " Has joined the Event!", doFooter=True)
+        await ctx.send(embed=embed)
+        await eventlog.send(embed=eventembed)
+        spectatorrole= discord.utils.get(ctx.guild.roles, id = int(580346443752144896))
+        applicationrole=discord.utils.get(ctx.guild.roles, id = int(580376459596660736))
+        await ctx.author.add_roles(applicationrole)
+        await ctx.author.add_roles(spectatorrole)
+        await log(member + " has Joined the Event!")
+    else:
+        embederrorno=MakeEmbed(title="ERROR", description="Events are not open right now!", color=discord.Color.dark_red(), doFooter=True)
+        await ctx.send(embed=embederrorno)
+@bot.command()
+async def addplayer(ctx, name: discord.Member=None):
+    if ctx.author.id in eventcoordinators:
+        if name.id:
+            print(str(name))
+            embed=MakeEmbed(title="Add Player", description="Adding " + str(name.mention) + " to the player role.")
+            await ctx.send(embed=embed)
+            playerrole = discord.utils.get(ctx.guild.roles, id=int(580368602469761036))
+            await name.add_roles(playerrole)
+@bot.command()
+async def appdone(ctx):
+    if ctx.channel is discord.utils.get(ctx.guild.channels, id=int(580376411705966603)):
+        username=str(ctx.author)
+        applicationrole=discord.utils.get(ctx.guild.roles, id = int(580376459596660736))
+        roleid = 580346443752144896
+        if roleid in [y.id for y in ctx.author.roles]:
+            embed=MakeEmbed(title="Application Done", description="Ok Informing Coordinators about your Application!", doFooter=True)
+            await ctx.send(embed=embed)
+            eventlog = discord.utils.get(ctx.guild.channels, id=int(580346329817939989))
+            await eventlog.send("<@&580346464786710538>")
+            mentionembed=MakeEmbed(title="Application Finished",description=username + " has finished his Application.")
+            await eventlog.send(embed=mentionembed)
+            await ctx.author.remove_roles(applicationrole)
+        else:
+            errorembed=MakeEmbed(title="ERROR", description="Your not in the Event!", color=discord.Color.dark_red(), doFooter=True)
+            await ctx.send(embed=errorembed)
+    else:
+        return
+@bot.command()
+async def finishevent(ctx):
+    if ctx.author.id in eventcoordinators:
+        embed=MakeEmbed(title="Finish Event", description="Removing all Members from the Event Role", doFooter=True)
+        await ctx.send(embed=embed)
+        role = discord.utils.get(ctx.guild.roles, id = int(580346443752144896))
+        for member in ctx.guild.members:
+            await member.remove_roles(role)
+    else:
+        return
 
 
 @bot.command()
@@ -599,7 +658,8 @@ async def purge_unverified():
 async def on_member_join(member):
     if member.id==bot.user.id:
         return
-    await playerjoin(member)
+    else:
+        await playerjoin(member)
 
 
 bot.loop.create_task(purge_unverified())
