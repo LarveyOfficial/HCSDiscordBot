@@ -154,11 +154,11 @@ async def appdone(ctx):
 @bot.command()
 async def finishevent(ctx):
     if ctx.author.id in eventcoordinators:
-        embed=MakeEmbed(title="Finish Event", description="Removing all Members from the Event Role", doFooter=True)
+        embed=MakeEmbed(title="Finish Event", description="Removing all Members from the Event Role, this may take a couple minutes.", doFooter=True)
         await ctx.send(embed=embed)
         role = discord.utils.get(ctx.guild.roles, id = int(580206347782455297))
         approle = discord.utils.get(ctx.guild.roles, id = int(580395362309636102))
-        for member in ctx.guild.members:
+        for member in role.members:
             await member.remove_roles(role)
             await member.remove_roles(approle)
             print("Removing " + str(member))
