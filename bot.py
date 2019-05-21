@@ -161,6 +161,7 @@ async def finishevent(ctx):
         for member in ctx.guild.members:
             await member.remove_roles(role)
             await member.remove_roles(approle)
+            print("Removed")
     else:
         return
 
