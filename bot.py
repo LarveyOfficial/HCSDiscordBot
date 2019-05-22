@@ -767,7 +767,7 @@ async def identify(ctx, name: discord.Member=None):
                         if str(student_id12) in row[30] and str(student_id12) == str(studentid):
                             firstname = row[1]
                             lastname = row[3]
-                            discordname = str(name)
+                            discordname = str(name.name)
                             await log("Finding "+discordname+"'s name..")
                             studentname=MakeEmbed(title="Identify", description=discordname+"'s"+" name is: " + firstname + " " + lastname)
                             await log("Name found, sending")
