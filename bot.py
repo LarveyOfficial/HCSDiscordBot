@@ -120,9 +120,38 @@ async def event(ctx):
         await ctx.author.add_roles(applicationrole)
         await ctx.author.add_roles(spectatorrole)
         await log(member + " has Joined the Event!")
+
+@bot.command()
+async def checkevent(ctx):
+    the_doc = user_col.find_one({'user_name': "Larvey"})
+    if the_doc['event'] is True:
+        embed=MakeEmbed(title="Event Status",description="An Event is open right now! Use $event to join!", doFooter=True)
+        ctx.send(embed=embed)
+    else:
+        embed=MakeEmbed(title="Event Status",description="Sorry, there are not events open at the moment.", doFooter=True)
+        ctx.send(embed=embed)
+
+@bot.command()
+async def eventleave(ctx):
+    the_doc = user_col.find_one({'user_name': "Larvey"})
+    if the_doc['event'] is True:
+        member = str(ctx.author)
+        embed = MakeEmbed(title="Event", description="Ok! Removing you from the Event!", doFooter=True)
+        eventlog = discord.utils.get(ctx.guild.channels, id=int(580207666614501386))
+        eventembed = MakeEmbed(title="User Left", description=member + " Has left the Event!", doFooter=True)
+        await ctx.send(embed=embed)
+        await eventlog.send(embed=eventembed)
+        spectatorrole= discord.utils.get(ctx.guild.roles, id = int(580206347782455297))
+        applicationrole=discord.utils.get(ctx.guild.roles, id = int(580395362309636102))
+        eventplayer = discord.utils.get(ctx.guild.roles, id = int(580209037409517569))
+        await ctx.author.remove_roles(applicationrole)
+        await ctx.author.remove_roles(spectatorrole)
+        await ctx.author.remove_roles(eventplayer)
+        await log(member + " has left the Event!")
     else:
         embederrorno=MakeEmbed(title="ERROR", description="Events are not open right now!", color=discord.Color.dark_red(), doFooter=True)
         await ctx.send(embed=embederrorno)
+
 @bot.command()
 async def addplayer(ctx, name: discord.Member=None):
     if ctx.author.id in eventcoordinators:
@@ -132,6 +161,17 @@ async def addplayer(ctx, name: discord.Member=None):
             await ctx.send(embed=embed)
             playerrole = discord.utils.get(ctx.guild.roles, id=int(580209037409517569))
             await name.add_roles(playerrole)
+
+@bot.command()
+async def rmplayer(ctx, name: discord.Member=None):
+    if ctx.author.id in eventcoordinators:
+        if name.id:
+            print(str(name))
+            embed=MakeEmbed(title="Remove Player", description="Removing " + str(name.mention) + " from the player role.")
+            await ctx.send(embed=embed)
+            playerrole = discord.utils.get(ctx.guild.roles, id=int(580209037409517569))
+            await name.remove_roles(playerrole)
+
 @bot.command()
 async def appdone(ctx):
     if ctx.channel is discord.utils.get(ctx.guild.channels, id=int(580395742020108308)):
@@ -305,7 +345,7 @@ async def close(ctx):
 @bot.group()
 async def help(ctx):
     if ctx.invoked_subcommand is None:
-        embed = MakeEmbed(title="Help", description="The following commands can be used by anyone:\n-role\n-rmrole\n-ping\n-ticket\n-identify\n-help <command>",doFooter=True)
+        embed = MakeEmbed(title="Help", description="The following commands can be used by anyone:\n-role\n-rmrole\n-ping\n-ticket\n-identify\n-event\n-help <command>",doFooter=True)
         await ctx.send(embed=embed)
 
 
@@ -343,6 +383,10 @@ async def ping(ctx):
     embed=MakeEmbed(title='🏓 PONG 🏓', description="**{0} ms**".format(round(bot.latency * 1000, 1)))
     await ctx.send(embed=embed)
 
+@help.command()
+async def event(ctx):
+    embed = MakeEmbed(title="Help - Event", description="$event - To Join an Event.\n$eventleave - To leave an Event", doFooter=True)
+    await ctx.send(embed=embed)
 
 @bot.command()
 async def purge_all(ctx):
