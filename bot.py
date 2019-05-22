@@ -107,19 +107,6 @@ def check_for_doc(check_key, check_val, check_key2=None, check_val2=None):
 
 
 
-
-@bot.command()
-async def seniors(ctx):
-    if ctx.author.id in owner_ids:
-        seniorrole = discord.utils.get(ctx.guild.roles, id = int(543060511441289216))
-        alumni = discord.utils.get(ctx.guild.roles, id = int(578278845648732173))
-        await ctx.send("Got it.")
-        for member in seniorrole.members:
-            print("starting")
-            await member.add_roles(alumni)
-            await member.remove_roles(seniorrole)
-            print("Changed "+str(member)+" to Alumni.")
-
 @bot.command()
 async def status(ctx):
     current_time = time.time()
@@ -137,6 +124,10 @@ async def status(ctx):
             elif str(member.status) == 'idle':
                 online += 1
             elif str(member.status) == 'offline':
+                offline += 1
+            elif str(member.status) == 'dnd':
+                online += 1
+            elif str(member.status) == 'invisible':
                 offline += 1
     allmembers=online + offline
     embed = MakeEmbed(title="Status", description="**HCS Discord Server Status**:\n\nTotal **Members**:" + str(allmembers) +"\nOnline **Members**: "+ str(online) + "\n Offline **Members**: "+ str(offline) +"\nBot running for: "+uptime+"\n", doFooter=True)
