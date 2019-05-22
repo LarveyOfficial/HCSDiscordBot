@@ -158,9 +158,11 @@ async def finishevent(ctx):
         await ctx.send(embed=embed)
         role = discord.utils.get(ctx.guild.roles, id = int(580206347782455297))
         approle = discord.utils.get(ctx.guild.roles, id = int(580395362309636102))
+        eventplayer = discord.utils.get(ctx.guild.roles, id = int(580209037409517569))
         for member in role.members:
             await member.remove_roles(role)
             await member.remove_roles(approle)
+            await member.remove_roles(eventplayer)
             print("Removing " + str(member))
     else:
         return
