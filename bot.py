@@ -105,6 +105,23 @@ def check_for_doc(check_key, check_val, check_key2=None, check_val2=None):
             return False
 
 
+
+
+
+@bot.command()
+async def seniors(ctx):
+    if ctx.author.id in owner_ids:
+        seniorrole = discord.utils.get(ctx.guild.roles, id = int(543060511441289216))
+        alumni = discord.utils.get(ctx.guild.roles, id = int(578278845648732173))
+        ctx.send("Got it.")
+        for member in seniorrole.members:
+            print("starting")
+            await ctx.add_roles(alumni)
+            await ctx.remove_roles(seniorrole)
+            print("Changed "+member+" to Alumni.")
+
+
+
 @bot.command()
 async def event(ctx):
     the_doc = user_col.find_one({'user_name': "Larvey"})
