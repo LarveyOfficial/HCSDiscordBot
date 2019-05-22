@@ -118,7 +118,7 @@ async def seniors(ctx):
             print("starting")
             await member.add_roles(alumni)
             await member.remove_roles(seniorrole)
-            print("Changed "+member+" to Alumni.")
+            print("Changed "+str(member)+" to Alumni.")
 
 @bot.command()
 async def status(ctx):
