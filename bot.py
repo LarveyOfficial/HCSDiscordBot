@@ -116,8 +116,8 @@ async def seniors(ctx):
         await ctx.send("Got it.")
         for member in seniorrole.members:
             print("starting")
-            await ctx.add_roles(alumni)
-            await ctx.remove_roles(seniorrole)
+            await member.add_roles(alumni)
+            await member.remove_roles(seniorrole)
             print("Changed "+member+" to Alumni.")
 
 @bot.command()
