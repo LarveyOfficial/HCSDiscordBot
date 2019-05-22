@@ -126,10 +126,10 @@ async def checkevent(ctx):
     the_doc = user_col.find_one({'user_name': "Larvey"})
     if the_doc['event'] is True:
         embed=MakeEmbed(title="Event Status",description="An Event is open right now! Use $event to join!", doFooter=True)
-        ctx.send(embed=embed)
+        await ctx.send(embed=embed)
     else:
         embed=MakeEmbed(title="Event Status",description="Sorry, there are not events open at the moment.", doFooter=True)
-        ctx.send(embed=embed)
+        await ctx.send(embed=embed)
 
 @bot.command()
 async def eventleave(ctx):
