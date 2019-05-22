@@ -22,7 +22,7 @@ print("authenticated with mongo database")
 hcs_db = client.HCS
 user_col = hcs_db.users
 print('collected documents (' + str(user_col.count_documents({})) + ")")
-
+start_time = time.time()
 
 async def sendemail(studentemail, emailcode):
     body = "Your HCSDiscord Verification Code is \n\n" + str(emailcode)+"\n\nPlease use $verify "+str(emailcode)+ " in your setup channel\nYour code will Expire in 24hours\n\n" + "If you don't believe this was you please msg Larvey#0001 on Discord."
@@ -120,7 +120,27 @@ async def seniors(ctx):
             await ctx.remove_roles(seniorrole)
             print("Changed "+member+" to Alumni.")
 
-
+@bot.command()
+async def status(ctx):
+    current_time = time.time()
+    difference = int(round(current_time - start_time))
+    uptime = str(datetime.timedelta(seconds=difference))
+    online = 0
+    offline = 0
+    await bot.wait_until_ready()
+    startTime = time.time()
+    theservers = [573171504234233886]
+    for server in theservers:
+        for member in ctx.guild.members:
+            if str(member.status) == 'online':
+                online += 1
+            elif str(member.status) == 'idle':
+                online += 1
+            elif str(member.status) == 'offline':
+                offline += 1
+    allmembers=online + offline
+    embed = MakeEmbed(title="Status", description="**HCS Discord Server Status**:\n\nTotal **Members**:" + str(allmembers) +"\nOnline **Members**: "+ str(online) + "\n Offline **Members**: "+ str(offline) +"\nBot running for: "+uptime+"\n", doFooter=True)
+    await ctx.send(embed=embed)
 
 @bot.command()
 async def event(ctx):
@@ -365,7 +385,7 @@ async def close(ctx):
 @bot.group()
 async def help(ctx):
     if ctx.invoked_subcommand is None:
-        embed = MakeEmbed(title="Help", description="The following commands can be used by anyone:\n-role\n-rmrole\n-ping\n-ticket\n-identify\n-event\n-help <command>",doFooter=True)
+        embed = MakeEmbed(title="Help", description="The following commands can be used by anyone:\n-role\n-rmrole\n-ping\n-ticket\n-identify\n-event\n-status\n-help <command>",doFooter=True)
         await ctx.send(embed=embed)
 
 
@@ -397,16 +417,20 @@ async def ticket(ctx):
     embed = MakeEmbed(title="Help - Ticket", description="$ticket - To make a new ticket\n$close - To close a ticket\n$adduser <user> - To add a user to a Ticket\n$rmuser <user> - To remove user from a Ticket", doFooter=True)
     await ctx.send(embed=embed)
 
+@help.command()
+async def event(ctx):
+    embed = MakeEmbed(title="Help - Event", description="$event - To Join an Event.\n$eventleave - To leave an Event\n$checkevent - To check Event Status", doFooter=True)
+    await ctx.send(embed=embed)
+
+@help.command()
+async def status(ctx):
+    embed = MakeEmbed(title="Help - Status", description="$status - To amount of members, and bot status", doFooter=True)
 
 @bot.command()
 async def ping(ctx):
     embed=MakeEmbed(title='🏓 PONG 🏓', description="**{0} ms**".format(round(bot.latency * 1000, 1)))
     await ctx.send(embed=embed)
 
-@help.command()
-async def event(ctx):
-    embed = MakeEmbed(title="Help - Event", description="$event - To Join an Event.\n$eventleave - To leave an Event\n$checkevent - To check Event Status", doFooter=True)
-    await ctx.send(embed=embed)
 
 @bot.command()
 async def purge_all(ctx):
