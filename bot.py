@@ -120,6 +120,9 @@ async def event(ctx):
         await ctx.author.add_roles(applicationrole)
         await ctx.author.add_roles(spectatorrole)
         await log(member + " has Joined the Event!")
+    else:
+        embederrorno=MakeEmbed(title="ERROR", description="Events are not open right now!", color=discord.Color.dark_red(), doFooter=True)
+        await ctx.send(embed=embederrorno)
 
 @bot.command()
 async def checkevent(ctx):
