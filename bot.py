@@ -129,7 +129,7 @@ async def status(ctx):
     offline = 0
     await bot.wait_until_ready()
     startTime = time.time()
-    theservers = [573171504234233886]
+    theservers = [543059123730644992]
     for server in theservers:
         for member in ctx.guild.members:
             if str(member.status) == 'online':
