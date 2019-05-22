@@ -113,7 +113,7 @@ async def seniors(ctx):
     if ctx.author.id in owner_ids:
         seniorrole = discord.utils.get(ctx.guild.roles, id = int(543060511441289216))
         alumni = discord.utils.get(ctx.guild.roles, id = int(578278845648732173))
-        ctx.send("Got it.")
+        await ctx.send("Got it.")
         for member in seniorrole.members:
             print("starting")
             await ctx.add_roles(alumni)
