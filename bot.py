@@ -385,7 +385,7 @@ async def ping(ctx):
 
 @help.command()
 async def event(ctx):
-    embed = MakeEmbed(title="Help - Event", description="$event - To Join an Event.\n$eventleave - To leave an Event", doFooter=True)
+    embed = MakeEmbed(title="Help - Event", description="$event - To Join an Event.\n$eventleave - To leave an Event\n$checkevent - To check Event Status", doFooter=True)
     await ctx.send(embed=embed)
 
 @bot.command()
