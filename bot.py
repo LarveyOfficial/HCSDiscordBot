@@ -112,7 +112,7 @@ async def seniorsupgrade(ctx):
         await ctx.send("Got it.")
         for member in seniorrole.members:
             thedocument = {'user_id': str(member.id)}
-            updatedoc = { "$set": ['grade':"Alumni"]}
+            updatedoc = { "$set": ['grade': "Alumni"]}
             the_doc = user_col.update_one(thedocument, updatedoc)
             print("starting")
             await member.add_roles(alumni)
@@ -128,7 +128,7 @@ async def freshmenupgrade(ctx):
         await ctx.send("Got it.")
         for member in freshmenrole.members:
             thedocument = {'user_id': str(member.id)}
-            updatedoc = { "$set": ['grade':"Sophomore"]}
+            updatedoc = { "$set": ['grade': "Sophomore"]}
             user_col.update_one(thedocument, updatedoc)
             print("starting")
             await member.add_roles(sophomorerole)
@@ -144,7 +144,7 @@ async def sophomoreupgrade(ctx):
         await ctx.send("Got it.")
         for member in sophomorerole.members:
             thedocument = {'user_id': str(member.id)}
-            updatedoc = { "$set": ['grade':"Junior"]}
+            updatedoc = { "$set": ['grade': "Junior"]}
             user_col.update_one(thedocument, updatedoc)
             print("starting")
             await member.add_roles(juniorrole)
@@ -160,7 +160,7 @@ async def juniorupgrade(ctx):
         await ctx.send("Got it.")
         for member in junior.members:
             thedocument = {'user_id': str(member.id)}
-            updatedoc = { "$set": ['grade':"Senior"]}
+            updatedoc = { "$set": ['grade': "Senior"]}
             user_col.update_one(thedocument, updatedoc)
             print("starting")
             await member.add_roles(senior)
