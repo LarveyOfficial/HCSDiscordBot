@@ -104,6 +104,69 @@ def check_for_doc(check_key, check_val, check_key2=None, check_val2=None):
         else:
             return False
 
+@bot.command()
+async def seniorsupgrade(ctx):
+    if ctx.author.id in owner_ids:
+        seniorrole = discord.utils.get(ctx.guild.roles, id = int(543060511441289216))
+        alumni = discord.utils.get(ctx.guild.roles, id = int(578278845648732173))
+        await ctx.send("Got it.")
+        for member in seniorrole.members:
+            thedocument = {'user_id': str(member.id)}
+            updatedoc = { "$set": {'grade': "Alumni"}}
+            the_doc = user_col.update_one(thedocument, updatedoc)
+            print("starting")
+            await member.add_roles(alumni)
+            await member.remove_roles(seniorrole)
+            print("Changed "+str(member)+" to Alumni.")
+
+
+
+@bot.command()
+async def freshmenupgrade(ctx):
+    if ctx.author.id in owner_ids:
+        freshmenrole = discord.utils.get(ctx.guild.roles, id = int(543060124600762406))
+        sophomorerole = discord.utils.get(ctx.guild.roles, id = int(543060215646388224))
+        await ctx.send("Got it.")
+        for member in freshmenrole.members:
+            thedocument = {'user_id': str(member.id)}
+            updatedoc = { "$set": {'grade': "Sophomore"}}
+            user_col.update_one(thedocument, updatedoc)
+            print("starting")
+            await member.add_roles(sophomorerole)
+            await member.remove_roles(freshmenrole)
+            print("Changed "+str(member)+" to Sophomore.")
+
+
+@bot.command()
+async def sophomoreupgrade(ctx):
+    if ctx.author.id in owner_ids:
+        sophomorerole = discord.utils.get(ctx.guild.roles, id = int(543060215646388224))
+        juniorrole = discord.utils.get(ctx.guild.roles, id = int(543060357191827478))
+        await ctx.send("Got it.")
+        for member in sophomorerole.members:
+            thedocument = {'user_id': str(member.id)}
+            updatedoc = { "$set": {'grade': "Junior"}}
+            user_col.update_one(thedocument, updatedoc)
+            print("starting")
+            await member.add_roles(juniorrole)
+            await member.remove_roles(sophomorerole)
+            print("Changed "+str(member)+" to Junior.")
+
+
+@bot.command()
+async def juniorupgrade(ctx):
+    if ctx.author.id in owner_ids:
+        junior = discord.utils.get(ctx.guild.roles, id = int(543060357191827478))
+        senior = discord.utils.get(ctx.guild.roles, id = int(543060511441289216))
+        await ctx.send("Got it.")
+        for member in junior.members:
+            thedocument = {'user_id': str(member.id)}
+            updatedoc = { "$set": {'grade': "Senior"}}
+            user_col.update_one(thedocument, updatedoc)
+            print("starting")
+            await member.add_roles(senior)
+            await member.remove_roles(junior)
+            print("Changed "+str(member)+" to Senior.")
 
 
 
