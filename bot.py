@@ -124,12 +124,12 @@ async def seniorsupgrade(ctx):
 async def thisisabigboitest(ctx):
     if ctx.author.id in owner_ids:
         ownerrole= discord.utils.get(ctx.guild.roles, id = int(562787743013535744))
-            await ctx.send("KK")
-            for member in ownerrole.members:
-                thedoc = {'user_id': str(member.id)}
-                updatedoc = {"$set": {'grade': 'ItWorked'}}
-                run = user_col.update_one(thedoc, updatedoc)
-                print("It worked2")
+        await ctx.send("KK")
+        for member in ownerrole.members:
+            thedoc = {'user_id': str(member.id)}
+            updatedoc = {"$set": {'grade': 'ItWorked'}}
+            run = user_col.update_one(thedoc, updatedoc)
+            print("It worked2")
 
 
 @bot.command()
