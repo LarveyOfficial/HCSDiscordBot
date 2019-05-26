@@ -609,11 +609,11 @@ async def compare_id(channel, member, student_id):
                             if reaction3.emoji == "🇾":
                                 await log(member.name + " has confirmed that "+student_id+" is their student ID. Sending Email.")
                                 await log("Email Address is: "+studentemail)
-                                await channel.send("We have sent you an email with a Verifiation Code to "+studentemail+" Please use $verify + Your Code, email may take up to 2 minutes to send.")
+                                await channel.send("We have sent you an email with a Verifiation Code to "+studentemail+"\n\n Email may take up to 2 Minutes to Send.\n\n**USE $Verify + YOURCODE to verify**\n Ex: $verify ABC123")
                                 await sendemail(studentemail, emailcode)
                                 updated_tag = {"$set": {'student_id': str(student_id)}}
                                 user_col.update_one({'user_id': str(member.id)}, updated_tag)
-                                await log('updated user id to be the user id they have so yeah. Now ima send an email. *dabs*')
+                                await log('Email Sent and Finished Setup')
                                 return True
                             if reaction3.emoji == "🇳":
                                 await confirmmsg.edit(content="Not sending email. (In order to complete the setup, you will need to verify by email.)\nPlease type your student ID.")
