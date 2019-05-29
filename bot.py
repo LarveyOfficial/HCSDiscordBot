@@ -524,6 +524,7 @@ async def purge_all(ctx):
 
 @bot.event
 async def on_ready():
+    await bot.change_presence(status='idle')
     await log("bot logged in with version: "+version)
     await log("Connected to " + str(len(bot.guilds)) + " server(s):")
     await log("Bot Connected to Gmail Servers")
