@@ -3,6 +3,7 @@ from discord.ext import commands
 import discord, time, asyncio, pymongo, string, random, csv, smtplib
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
+from mcstatus import MinecraftServer
 import datetime
 if __name__ == '__main__':
     import config
@@ -14,6 +15,7 @@ bot.remove_command('help')
 print("Loading....")
 owner_ids=[245653078794174465]
 eventcoordinators=[467515585270513674, 245653078794174465]
+server = config.mcserver
 role_list = ['band', 'ssb', 'minecraft', 'bedwars', 'communist', 'art', 'languages', 'gamer', 'ping']
 
 # lol don't touch this
@@ -79,6 +81,24 @@ def MakeEmbed(author=None, author_url=None, title=None, description=None, url=No
     if doFooter is True:
         embed.set_footer(text="HCS discord bot.", icon_url=bot.user.avatar_url)
     return embed
+
+async def mcserverstats():
+    is_online=True
+    tries = 3
+    try:
+        status = server.status()
+        await bot.change_presence(status='online')
+        if is_online == False:
+            tries = 3
+            is_online = True
+    except:
+        if tries < 1:
+            await bot.change_presence(status='dnd')
+            await log("Minecraft Server Went Offline")
+            if is_online == True:
+                is_online = False
+        else:
+            tries = tries - 1
 
 
 def make_doc(user_name=None, user_id=None, code=None, grade=None, student_id=None, verified=False):
@@ -513,6 +533,7 @@ async def on_ready():
         people = random.choice(guild.members)
         await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.watching, name=people.name))
         print('Changes Status To '+ people.name)
+        await mcserverstats()
         await asyncio.sleep(60)
 
 
