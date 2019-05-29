@@ -82,25 +82,6 @@ def MakeEmbed(author=None, author_url=None, title=None, description=None, url=No
         embed.set_footer(text="HCS discord bot.", icon_url=bot.user.avatar_url)
     return embed
 
-async def mcserverstats():
-    is_online=True
-    tries = 3
-    try:
-        status = server.status()
-        await bot.change_presence(status='online')
-        if is_online == False:
-            tries = 3
-            is_online = True
-    except:
-        if tries < 1:
-            await bot.change_presence(status='dnd')
-            await log("Minecraft Server Went Offline")
-            if is_online == True:
-                is_online = False
-        else:
-            tries = tries - 1
-
-
 def make_doc(user_name=None, user_id=None, code=None, grade=None, student_id=None, verified=False):
     doc_ = {'user_name': user_name, 'user_id': str(user_id), 'code': code, 'grade': str(grade), 'student_id': str(student_id), 'verified': verified}  # 'code' == None if verified and verified will be true
     return doc_
@@ -534,7 +515,6 @@ async def on_ready():
         people = random.choice(guild.members)
         await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.watching, name=people.name))
         print('Changes Status To '+ people.name)
-        await mcserverstats()
         await asyncio.sleep(60)
 
 
