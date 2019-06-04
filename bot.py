@@ -556,6 +556,7 @@ async def get_student_id(member, channel):
         if idmsg.author.id is member.id:
             student_id6 = ''.join(filter(lambda x: x.isdigit(), idmsg.content))
             try_for_id = user_col.find_one({'student_id': str(student_id6)})
+            print("Test")
             if try_for_id is not None:
                 await channel.send('ERROR: That ID is already In use. Please use another one. Contact Larvey#0001 if this *is* your student ID.')
                 continue
