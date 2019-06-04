@@ -551,7 +551,8 @@ async def select_middle_school(member, channel):
 
 async def get_student_id(member, channel):
     await channel.send("*Final Step:* Please type your student ID.")
-    while member in ctx.guild.members:
+    guild = bot.get_guild(config.guild_id)
+    while member in guild.members:
         idmsg = await bot.wait_for('message')
         if idmsg.author.id is member.id:
             student_id6 = ''.join(filter(lambda x: x.isdigit(), idmsg.content))
