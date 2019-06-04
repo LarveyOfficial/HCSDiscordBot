@@ -563,7 +563,7 @@ async def get_student_id(member, channel):
                 await channel.send('ERROR: Thats not a Valid ID')
                 continue
             if await compare_id(idmsg.channel, idmsg.author, student_id6):
-                return
+                break
             else:
                 continue
         else:
