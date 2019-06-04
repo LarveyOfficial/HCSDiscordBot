@@ -550,8 +550,8 @@ async def select_middle_school(member, channel):
 
 
 async def get_student_id(member, channel):
-    await channel.send("*Step three:* Please type your student ID.")
-    while True:
+    await channel.send("*Final Step:* Please type your student ID.")
+    while member in guild.members:
         idmsg = await bot.wait_for('message')
         if idmsg.author.id is member.id:
             student_id6 = ''.join(filter(lambda x: x.isdigit(), idmsg.content))
@@ -564,7 +564,7 @@ async def get_student_id(member, channel):
                 await channel.send('ERROR: Thats not a Valid ID')
                 continue
             if await compare_id(idmsg.channel, idmsg.author, student_id6):
-                break
+                return
             else:
                 continue
         else:
