@@ -634,7 +634,7 @@ async def compare_id(channel, member, student_id):
 async def select_high_school(member, channel):
     print(member.name + " choose highschool")
 
-    msg2 = await channel.send("*Step two:* Whats your grade?\n\n🇦: Freshmen,\n🇧: Sophmore,\n🇨: Junior,\n🇩: Senior\n\nReact accordingly.")
+    msg2 = await channel.send("*Step two:* Whats your grade?\n\n🇦: Freshmen,\n🇧: Sophmore,\n🇨: Junior,\n🇩: Senior\n\nReact accordingly.\n\n**WARNING: PLEASE SELECT YOUR 2019-2020 SCHOOL YEAR**")
     await msg2.add_reaction("🇦")
     await msg2.add_reaction("🇧")
     await msg2.add_reaction("🇨")
