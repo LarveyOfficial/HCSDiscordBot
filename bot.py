@@ -105,6 +105,146 @@ def check_for_doc(check_key, check_val, check_key2=None, check_val2=None):
         else:
             return False
 
+@bot.command(name='Upgrade')
+async def Upgrade(ctx, name: discord.Member=None):
+    if ctx.author.id in owner_ids:
+        if name is None:
+            embed=MakeEmbed(title="Upgrade", description="Please Specify Which user to Upgrade", doFooter=True)
+            await ctx.send(embed=embed)
+        else:
+            if name.id:
+                userid = user_col.find_one({'user_id': str(name.id)})
+                if userid is None:
+                    nouser = MakeEmbed(title="ERROR", description="User does not Exist.", color=discord.Color.dark_red(), doFooter=True)
+                    await ctx.send(embed=nouser)
+                else:
+                    their_doc = {'user_id': str(name.id)}
+                    alumnirole = discord.utils.get(ctx.guild.roles, id = int(578278845648732173))
+                    seniorrole = discord.utils.get(ctx.guild.roles, id = int(543060511441289216))
+                    juniorrole = discord.utils.get(ctx.guild.roles, id = int(543060357191827478))
+                    sophomorerole = discord.utils.get(ctx.guild.roles, id = int(543060215646388224))
+                    freshmenrole = discord.utils.get(ctx.guild.roles, id = int(543060124600762406))
+                    middleschoolrole = discord.utils.get(ctx.guild.roles, id = int(546025605221711882))
+                    if name in alumnirole.members:
+                        embed = MakeEmbed(title= "ERROR", description="You can't upgrade an Alumni", doFooter=True, color=discord.Color.dark_red())
+                        await ctx.send(embed=embed)
+                        print("ERROR: Cannot Upgrade Alumni")
+                    elif name in seniorrole.members:
+                        updatesenior = { "$set": {'grade': "Alumni"}}
+                        the_doc = user_col.update_one(their_doc, updatesenior)
+                        print("Upgraded " + str(name.id) + " to Alumni")
+                        await name.remove_roles(seniorrole)
+                        await name.add_roles(alumnirole)
+                        embed = MakeEmbed(title="Upgrade", description="Upgraded user to Alumni", doFooter=True)
+                        await ctx.send(embed=embed)
+                    elif name in juniorrole.members:
+                        updatejunior = { "$set": {'grade': "Senior"}}
+                        the_doc = user_col.update_one(their_doc, updatejunior)
+                        print("Upgraded " + str(name.id) + " to Senior")
+                        await name.remove_roles(juniorrole)
+                        await name.add_roles(seniorrole)
+                        embed = MakeEmbed(title="Upgrade", description="Upgraded user to Senior", doFooter=True)
+                        await ctx.send(embed=embed)
+                    elif name in sophomorerole.members:
+                        updatesophomore = { "$set": {'grade': "Junior"}}
+                        the_doc = user_col.update_one(their_doc, updatesophomore)
+                        print("Upgraded " + str(name.id) + " to Junior")
+                        await name.remove_roles(sophomorerole)
+                        await name.add_roles(juniorrole)
+                        embed = MakeEmbed(title="Upgrade", description="Upgraded user to Junior", doFooter=True)
+                        await ctx.send(embed=embed)
+                    elif name in freshmenrole.members:
+                        updatefreshmen = { "$set": {'grade': "Sophomore"}}
+                        the_doc = user_col.update_one(their_doc, updatefreshmen)
+                        print("Upgraded " + str(name.id) + " to Sophomore")
+                        await name.remove_roles(freshmenrole)
+                        await name.add_roles(sophomorerole)
+                        embed = MakeEmbed(title="Upgrade", description="Upgraded user to Sophomore", doFooter=True)
+                        await ctx.send(embed=embed)
+                    elif name in middleschoolrole.members:
+                        updatemiddleschool = { "$set": {'grade': "Freshmen"}}
+                        the_doc = user_col.update_one(their_doc, updatemiddleschool)
+                        print("Upgraded " + str(name.id) + " to Freshmen")
+                        await name.remove_roles(middleschoolrole)
+                        await name.add_roles(freshmenrole)
+                        embed = MakeEmbed(title="Upgrade", description="Upgraded user to Freshmen", doFooter=True)
+                        await ctx.send(embed=embed)
+                    else:
+                        embed = MakeEmbed(title="ERROR", description="User does not Exist and or is not in a Role.", doFooter=True, color=discord.Color.dark_red())
+                        await ctx.send(embed=embed)
+            else:
+                nouser=MakeEmbed(title="ERROR", description="User does not Exist.", color=discord.Color.dark_red(), doFooter=True)
+                ctx.send(embed=nouser)
+
+@bot.command(name='Downgrade')
+async def Downgrade(ctx, name: discord.Member=None):
+    if ctx.author.id in owner_ids:
+        if name is None:
+            embed=MakeEmbed(title="Downgrade", description="Please Specify Which user to Downgrade", doFooter=True)
+            await ctx.send(embed=embed)
+        else:
+            if name.id:
+                userid = user_col.find_one({'user_id': str(name.id)})
+                if userid is None:
+                    nouser = MakeEmbed(title="ERROR", description="User does not Exist.", color=discord.Color.dark_red(), doFooter=True)
+                    await ctx.send(embed=nouser)
+                else:
+                    their_doc = {'user_id': str(name.id)}
+                    alumnirole = discord.utils.get(ctx.guild.roles, id = int(578278845648732173))
+                    seniorrole = discord.utils.get(ctx.guild.roles, id = int(543060511441289216))
+                    juniorrole = discord.utils.get(ctx.guild.roles, id = int(543060357191827478))
+                    sophomorerole = discord.utils.get(ctx.guild.roles, id = int(543060215646388224))
+                    freshmenrole = discord.utils.get(ctx.guild.roles, id = int(543060124600762406))
+                    middleschoolrole = discord.utils.get(ctx.guild.roles, id = int(546025605221711882))
+                    if name in alumnirole.members:
+                        downalumni = { "$set": {'grade': "Senior"}}
+                        the_doc = user_col.update_one(their_doc, downalumni)
+                        print("Downgraded " + str(name.id) + " to Senior")
+                        await name.remove_roles(alumnirole)
+                        await name.add_roles(seniorrole)
+                        embed = MakeEmbed(title="Downgrade", description="Downgraded user to Senior", doFooter=True)
+                        await ctx.send(embed=embed)
+                    elif name in seniorrole.members:
+                        downsenior = { "$set": {'grade': "Junior"}}
+                        the_doc = user_col.update_one(their_doc, downsenior)
+                        print("Downgraded " + str(name.id) + " to Junior")
+                        await name.remove_roles(seniorrole)
+                        await name.add_roles(juniorrole)
+                        embed = MakeEmbed(title="Downgrade", description="Downgraded user to Junior", doFooter=True)
+                        await ctx.send(embed=embed)
+                    elif name in juniorrole.members:
+                        downjunior = { "$set": {'grade': "Sophomore"}}
+                        the_doc = user_col.update_one(their_doc, downjunior)
+                        print("Downgraded " + str(name.id) + " to Sophomore")
+                        await name.remove_roles(juniorrole)
+                        await name.add_roles(sophomorerole)
+                        embed = MakeEmbed(title="Downgrade", description="Downgraded user to Sophomore", doFooter=True)
+                        await ctx.send(embed=embed)
+                    elif name in sophomorerole.members:
+                        downsophomore = { "$set": {'grade': "Freshmen"}}
+                        the_doc = user_col.update_one(their_doc, downsophomore)
+                        print("Upgraded " + str(name.id) + " to Freshmen")
+                        await name.remove_roles(sophomorerole)
+                        await name.add_roles(freshmenrole)
+                        embed = MakeEmbed(title="Downgrade", description="Downgraded user to Freshmen", doFooter=True)
+                        await ctx.send(embed=embed)
+                    elif name in freshmenrole.members:
+                        downfreshmen = { "$set": {'grade': "Middle School"}}
+                        the_doc = user_col.update_one(their_doc, downfreshmen)
+                        print("Upgraded " + str(name.id) + " to Middle School")
+                        await name.remove_roles(freshmenrole)
+                        await name.add_roles(middleschoolrole)
+                        embed = MakeEmbed(title="Downgrade", description="Downgraded user to MiddleSchool", doFooter=True)
+                        await ctx.send(embed=embed)
+                    elif name in middleschoolrole.members:
+                        embed = MakeEmbed(title = "ERROR", description="You can't downgrade a Middleschooler", doFooter=True, color=discord.Color.dark_red())
+                        await ctx.send(embed=embed)
+                    else:
+                        embed = MakeEmbed(title="ERROR", description="User does not Exist and or is not in a Role.", doFooter=True, color=discord.Color.dark_red())
+                        await ctx.send(embed=embed)
+            else:
+                nouser=MakeEmbed(title="ERROR", description="User does not Exist.", color=discord.Color.dark_red(), doFooter=True)
+                ctx.send(embed=nouser)
 @bot.command()
 async def seniorsupgrade(ctx):
     if ctx.author.id in owner_ids:
@@ -119,6 +259,11 @@ async def seniorsupgrade(ctx):
             await member.add_roles(alumni)
             await member.remove_roles(seniorrole)
             print("Changed "+str(member)+" to Alumni.")
+        print("Finished Giving roles, Updating Offline files.")
+        alldocs = {'grade': "Senior"}
+        newalldocs = { "$set": {'grade': "Alumni"}}
+        updateddoc = user_col.update_many(alldocs, newalldocs)
+        print(updateddoc.modified_count, "Offline Documents Updated")
 
 @bot.command()
 async def freshmenupgrade(ctx):
@@ -134,6 +279,11 @@ async def freshmenupgrade(ctx):
             await member.add_roles(sophomorerole)
             await member.remove_roles(freshmenrole)
             print("Changed "+str(member)+" to Sophomore.")
+        print("Finished Giving roles, Updating Offline files.")
+        alldocs = {'grade': "Freshmen"}
+        newalldocs = { "$set": {'grade': "Sophomore"}}
+        updateddoc = user_col.update_many(alldocs, newalldocs)
+        print(updateddoc.modified_count, "Offline Documents Updated")
 
 
 @bot.command()
@@ -150,7 +300,11 @@ async def sophomoreupgrade(ctx):
             await member.add_roles(juniorrole)
             await member.remove_roles(sophomorerole)
             print("Changed "+str(member)+" to Junior.")
-
+        print("Finished Giving roles, Updating Offline files.")
+        alldocs = {'grade': "Sophomore"}
+        newalldocs = { "$set": {'grade': "Junior"}}
+        updateddoc = user_col.update_many(alldocs, newalldocs)
+        print(updateddoc.modified_count, "Offline Documents Updated")
 
 @bot.command()
 async def juniorupgrade(ctx):
@@ -166,7 +320,11 @@ async def juniorupgrade(ctx):
             await member.add_roles(senior)
             await member.remove_roles(junior)
             print("Changed "+str(member)+" to Senior.")
-
+        print("Finished Giving roles, Updating Offline files.")
+        alldocs = {'grade': "Junior"}
+        newalldocs = { "$set": {'grade': "Senior"}}
+        updateddoc = user_col.update_many(alldocs, newalldocs)
+        print(updateddoc.modified_count, "Offline Documents Updated")
 
 
 @bot.command()
@@ -634,7 +792,7 @@ async def compare_id(channel, member, student_id):
 async def select_high_school(member, channel):
     print(member.name + " choose highschool")
 
-    msg2 = await channel.send("*Step two:* Whats your grade?\n\n🇦: Freshmen,\n🇧: Sophmore,\n🇨: Junior,\n🇩: Senior\n\nReact accordingly.\n\n**WARNING: PLEASE SELECT YOUR 2019-2020 SCHOOL YEAR**")
+    msg2 = await channel.send("*Step two:* Whats your grade?\n\n🇦: Freshmen,\n🇧: Sophomore,\n🇨: Junior,\n🇩: Senior\n\nReact accordingly.\n\n**WARNING: PLEASE SELECT YOUR 2019-2020 SCHOOL YEAR**")
     await msg2.add_reaction("🇦")
     await msg2.add_reaction("🇧")
     await msg2.add_reaction("🇨")
@@ -651,7 +809,7 @@ async def select_high_school(member, channel):
                 await member.add_roles(role_)
                 break
             elif reaction2.emoji == "🇧":
-                await log(member.name + " Choose Sophmore")
+                await log(member.name + " Choose Sophomore")
                 await msg2.edit(content='10th grade selected')
                 gradeselect = "Sophomore"
                 roleid = 543060215646388224
@@ -807,7 +965,7 @@ async def on_command_error(ctx, error):
 @bot.command(name='identify')
 async def identify(ctx, name: discord.Member=None):
     if name is None:
-        embed=MakeEmbed(title="Identify", description="Use $identify to identify somones name.")
+        embed=MakeEmbed(title="Identify", description="Please Specify which user to Identify", doFooter=True)
         await ctx.send(embed=embed)
     else:
         if name.id:
