@@ -16,7 +16,7 @@ print("Loading....")
 owner_ids=[245653078794174465]
 eventcoordinators=[467515585270513674, 245653078794174465]
 server = config.mcserver
-role_list = ['band', 'ssb', 'minecraft', 'bedwars', 'communist', 'art', 'languages', 'gamer', 'ping']
+role_list = ['band', 'nintendoswitch', 'minecraft', 'bedwars', 'communist', 'art', 'languages', 'gamer', 'ping']
 
 # lol don't touch this
 client = pymongo.MongoClient(config.uri)
@@ -525,8 +525,13 @@ async def ticket(ctx, *, name:str = None):
         await ctx.send(embed=embed)
         ticketchannel = await ctx.guild.create_text_channel(ticketname, overwrites=overwrites, category=ticketcategory)
         await log(ctx.author.name + "Needs A Ticket..")
-        ticketembed = MakeEmbed(title="Ticket",description="Welcome " + ctx.author.mention + " This is your Ticket! <@&543060916086767617>", doFooter=True)
+        ticketembed = MakeEmbed(title="Ticket",description="Welcome " + ctx.author.mention + " This is your Ticket! ", doFooter=True)
         await ticketchannel.send(embed=ticketembed)
+        adminmention = await ctx.send("<@&543060916086767617>")
+        adminmention.delete()
+        usermention = await ctx.send(ctx.author.mention)
+        usermention.delete()
+
     else:
         ticketExists = MakeEmbed(title="ERROR",description="You already have a ticket open!", doFooter=True, color = discord.Color.dark_red())
         await ctx.send(embed=ticketExists)
