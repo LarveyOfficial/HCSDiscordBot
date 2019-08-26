@@ -3,7 +3,6 @@ from discord.ext import commands
 import discord, time, asyncio, pymongo, string, random, csv, smtplib
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
-from mcstatus import MinecraftServer
 import datetime
 if __name__ == '__main__':
     import config
@@ -15,7 +14,6 @@ bot.remove_command('help')
 print("Loading....")
 owner_ids=[245653078794174465]
 eventcoordinators=[467515585270513674, 245653078794174465]
-server = config.mcserver
 role_list = ['band', 'nintendoswitch', 'minecraft', 'bedwars', 'communist', 'art', 'languages', 'gamer', 'ping']
 
 # lol don't touch this
