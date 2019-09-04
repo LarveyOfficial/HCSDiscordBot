@@ -964,6 +964,81 @@ async def on_command_error(ctx, error):
     await log_error(str(error))
     raise error
 
+@bot.command(name='identifyall')
+async def identifyall(ctx):
+    Guestrole = discord.utils.get(ctx.guild.roles, id = int(600884705277247489))
+    middleschool = discord.utils.get(ctx.guild.roles, id = int(546025605221711882))
+    middleschoolers = "\n**Middleschoolers:**"
+    freshmen = discord.utils.get(ctx.guild.roles, id = int(543060124600762406))
+    LeFreshmen = "**\nFreshmen**:"
+    sophomore = discord.utils.get(ctx.guild.roles, id = int(543060215646388224))
+    Sophomores = "**\nSophomores:**"
+    junior = discord.utils.get(ctx.guild.roles, id = int(543060357191827478))
+    Juniors = "**\nJuniors:**"
+    senior = discord.utils.get(ctx.guild.roles, id = int(543060511441289216))
+    seniors = "**\nSeniors:**"
+    alumni = discord.utils.get(ctx.guild.roles, id = int(578278845648732173))
+    TheAlumni = "**\nAlumni:**"
+    for member in middleschool.members and not in Guestrole.members:
+        userid = member.id
+        student = user_col.find_one({'user_id': str(member.id)})
+        if student is None:
+            await ctx.send("ERROR: Member File Missing. Aborting Middleschool count")
+        else:
+            studentid = str(userid['student_id'])
+            with open('eggs.csv', newline='') as csvfile:
+                csvReader = csv.reader(csvfile, delimiter=',')
+                for row in csvReader:
+                    thestudent_id = ''.join(filter(lamba x: x.isdigit(), row[30]))
+                    if str(thestudent_id) in row[30] and str(thestudent_id) == str(studentid):
+                        firstname = row[1]
+                        lastname = row[3]
+                        middleschoolers += "\n" + firstname +" "+ lastname
+    for member in Freshmen.members and not in Guestrole.members:
+        userid = member.id
+        student = user_col.find_one({'user_id': str(member.id)})
+        if student is None:
+            await ctx.send("ERROR: Member File Missing. Aborting Freshmen count")
+        else:
+            studentid = str(userid['student_id'])
+            with open('eggs.csv', newline='') as csvfile:
+                csvReader = csv.reader(csvfile, delimiter=',')
+                for row in csvReader:
+                    thestudent_id = ''.join(filter(lamba x: x.isdigit(), row[30]))
+                    if str(thestudent_id) in row[30] and str(thestudent_id) == str(studentid):
+                        firstname = row[1]
+                        lastname = row[3]
+                        LeFreshmen += "\n" + firstname +" "+ lastname
+    for member in junior.members and not in Guestrole.members:
+        userid = member.id
+        student = user_col.find_one({'user_id': str(member.id)})
+        if student is None:
+            await ctx.send("ERROR: Member File Missing. Aborting Junior count")
+        else:
+            studentid = str(userid['student_id'])
+            with open('eggs.csv', newline='') as csvfile:
+                csvReader = csv.reader(csvfile, delimiter=',')
+                for row in csvReader:
+                    thestudent_id = ''.join(filter(lamba x: x.isdigit(), row[30]))
+                    if str(thestudent_id) in row[30] and str(thestudent_id) == str(studentid):
+                        firstname = row[1]
+                        lastname = row[3]
+                        juniors += "\n" + firstname +" "+ lastname
+    for member in senior.members and not in Guestrole.members:
+        userid = member.id
+        student = user_col.find_one({'user_id': str(member.id)})
+        if student is None:
+            await ctx.send("ERROR: Member File Missing. Aborting Senior count")
+        else:
+            studentid = str(userid['student_id'])
+            with open('eggs.csv', newline='') as csvfile:
+                csvReader = csv.reader(csvfile, delimiter=',')
+                for row in csvReader:
+                    thestudent_id = ''.join(filter(lamba x: x.isdigit(), row[30]))
+                    if str(thestudent_id) in row[30] and str(thestudent_id) == str(studentid):
+                        firstname = row[1]
+                        lastname = row[3]
+                        seniors += "\n" + firstname +" "+ lastname
 
 @bot.command(name='identify')
 async def identify(ctx, name: discord.Member=None):
