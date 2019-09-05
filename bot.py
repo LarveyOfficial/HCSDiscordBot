@@ -57,7 +57,7 @@ async def log_error(message):
         log_guild = bot.get_guild(config.log_guild)
         log_channel = discord.utils.get(log_guild.channels, id=config.log_channel)
         print('# ERROR:'+message)
-        await log_channel.send('['+str(datetime.datetime.utcnow())+'# ERROR:] '+message)
+        await log_channel.send('['+str(datetime.datetime.utcnow())+' <@245653078794174465> # ERROR:] '+message)
 
 
 def MakeEmbed(author=None, author_url=None, title=None, description=None, url=None, thumbnail=None, doFooter=False, color=None):
@@ -599,7 +599,7 @@ async def close(ctx):
 @bot.group()
 async def help(ctx):
     if ctx.invoked_subcommand is None:
-        embed = MakeEmbed(title="Help", description="The following commands can be used by anyone:\n-role\n-rmrole\n-ping\n-ticket\n-identify\n-event\n-status\n-help <command>",doFooter=True)
+        embed = MakeEmbed(title="Help", description="The following commands can be used by anyone:\n-role\n-rmrole\n-ping\n-ticket\n-identify\n-identifyall\n-event\n-status\n-help <command>",doFooter=True)
         await ctx.send(embed=embed)
 
 
@@ -623,6 +623,11 @@ async def ping(ctx):
 @help.command()
 async def identify(ctx):
     embed = MakeEmbed(title="Help - Identify", description="$identify <member> to see a user's real name.", doFooter=True)
+    await ctx.send(embed=embed)
+
+@help.command()
+async def identifyall(ctx):
+    embed = MakeEmbed(title="Help - Identifyall", description="$identifyall to see EVERYONES real name.", doFooter=True)
     await ctx.send(embed=embed)
 
 
@@ -968,117 +973,148 @@ async def on_command_error(ctx, error):
 async def identifyall(ctx):
     Guestrole = discord.utils.get(ctx.guild.roles, id = int(600884705277247489))
     middleschool = discord.utils.get(ctx.guild.roles, id = int(546025605221711882))
-    middleschoolers = "\n**Middleschoolers:**"
+    middleschoolers = ""
     freshmen = discord.utils.get(ctx.guild.roles, id = int(543060124600762406))
-    LeFreshmen = "**\nFreshmen**:"
+    LeFreshmen = ""
     sophomore = discord.utils.get(ctx.guild.roles, id = int(543060215646388224))
-    Sophomores = "**\nSophomores:**"
+    Sophomores = ""
     junior = discord.utils.get(ctx.guild.roles, id = int(543060357191827478))
-    Juniors = "**\nJuniors:**"
+    Juniors = ""
     senior = discord.utils.get(ctx.guild.roles, id = int(543060511441289216))
-    seniors = "**\nSeniors:**"
+    seniors = ""
     alumni = discord.utils.get(ctx.guild.roles, id = int(578278845648732173))
-    TheAlumni = "**\nAlumni:**"
-    for member in middleschool.members not in Guestrole.members:
-        userid = member.id
-        student = user_col.find_one({'user_id': str(member.id)})
-        if student is None:
-            await ctx.send("ERROR: Member File Missing for + "+  member.mention  +". Aborting Middleschool count")
-            break
+    TheAlumni = ""
+    loading = await ctx.send("Loading Middleschoolers...")
+    for member in middleschool.members:
+        if member in Guestrole.members:
+            middleschoolers += "\n- " + "**" +str(member.display_name) +"**" + " is a Guest"
         else:
-            studentid = str(userid['student_id'])
-            with open('eggs.csv', newline='') as csvfile:
-                csvReader = csv.reader(csvfile, delimiter=',')
-                for row in csvReader:
-                    student_id12 = ''.join(filter(lambda x: x.isdigit(), row[30]))
-                    if str(thestudent_id) in row[30] and str(thestudent_id) == str(studentid):
-                        firstname = row[1]
-                        lastname = row[3]
-                        middleschoolers += "\n- " + str(firstname) +" "+ str(lastname)
-    for member in Freshmen.members not in Guestrole.members:
-        userid = member.id
-        student = user_col.find_one({'user_id': str(member.id)})
-        if student is None:
-            await ctx.send("ERROR: Member File Missing for + "+  member.mention  +". Aborting Freshmen count")
-            break
+            userid = member.id
+            student = user_col.find_one({'user_id': str(member.id)})
+            if student is None:
+                await ctx.send("ERROR: Member File Missing for + "+  member.mention  +". Aborting Middleschool count")
+                break
+            else:
+                studentid = str(student['student_id'])
+                with open('eggs.csv', newline='') as csvfile:
+                    csvReader = csv.reader(csvfile, delimiter=',')
+                    for row in csvReader:
+                        thestudent_id = ''.join(filter(lambda x: x.isdigit(), row[30]))
+                        if str(thestudent_id) in row[30] and str(thestudent_id) == str(studentid):
+                            firstname = row[1]
+                            lastname = row[3]
+                            middleschoolers += "\n- " + "**" +str(member.display_name) +"**" + " is "+ str(firstname) +" "+ str(lastname)
+    await loading.edit(content ="Loading Freshmen...")
+    for member in freshmen.members:
+        if member in Guestrole.members:
+            LeFreshmen += "\n- " + "**" +str(member.display_name) +"**" + " is a Guest"
         else:
-            studentid = str(userid['student_id'])
-            with open('eggs.csv', newline='') as csvfile:
-                csvReader = csv.reader(csvfile, delimiter=',')
-                for row in csvReader:
-                    thestudent_id = ''.join(filter(lambda x: x.isdigit(), row[30]))
-                    if str(thestudent_id) in row[30] and str(thestudent_id) == str(studentid):
-                        firstname = row[1]
-                        lastname = row[3]
-                        LeFreshmen += "\n- " + str(firstname) +" "+ str(lastname)
-    for member in sophomore.members not in Guestrole.members:
-        userid = member.id
-        student = user_col.find_one({'user_id': str(member.id)})
-        if student is None:
-            await ctx.send("ERROR: Member File Missing for + "+  member.mention  +". Aborting Sophomore count")
-            break
+            userid = member.id
+            student = user_col.find_one({'user_id': str(member.id)})
+            if student is None:
+                await ctx.send("ERROR: Member File Missing for + "+  member.mention  +". Aborting Freshmen count")
+                break
+            else:
+                studentid = str(student['student_id'])
+                with open('eggs.csv', newline='') as csvfile:
+                    csvReader = csv.reader(csvfile, delimiter=',')
+                    for row in csvReader:
+                        thestudent_id = ''.join(filter(lambda x: x.isdigit(), row[30]))
+                        if str(thestudent_id) in row[30] and str(thestudent_id) == str(studentid):
+                            firstname = row[1]
+                            lastname = row[3]
+                            LeFreshmen += "\n- " + "**" +str(member.display_name) +"**" + " is "+ str(firstname) +" "+ str(lastname)
+    await loading.edit(content="Loading Sophomores...")
+    for member in sophomore.members:
+        if member in Guestrole.members:
+            Sophomores += "\n- " + "**" + str(member.display_name) + "**" + " is a Guest"
         else:
-            studentid = str(userid['student_id'])
-            with open('eggs.csv', newline='') as csvfile:
-                csvReader = csv.reader(csvfile, delimiter=',')
-                for row in csvReader:
-                    thestudent_id = ''.join(filter(lambda x: x.isdigit(), row[30]))
-                    if str(thestudent_id) in row[30] and str(thestudent_id) == str(studentid):
-                        firstname = row[1]
-                        lastname = row[3]
-                        Sophomore += "\n- " + firstname +" "+ lastname
-    for member in junior.members not in Guestrole.members:
-        userid = member.id
-        student = user_col.find_one({'user_id': str(member.id)})
-        if student is None:
-            await ctx.send("ERROR: Member File Missing for + "+  member.mention  +". Aborting Junior count")
-            break
+            userid = member.id
+            student = user_col.find_one({'user_id': str(member.id)})
+            if student is None:
+                await ctx.send("ERROR: Member File Missing for + "+  member.mention  +". Aborting Sophomore count")
+                break
+            else:
+                studentid = str(student['student_id'])
+                with open('eggs.csv', newline='') as csvfile:
+                    csvReader = csv.reader(csvfile, delimiter=',')
+                    for row in csvReader:
+                        thestudent_id = ''.join(filter(lambda x: x.isdigit(), row[30]))
+                        if str(thestudent_id) in row[30] and str(thestudent_id) == str(studentid):
+                            firstname = row[1]
+                            lastname = row[3]
+                            Sophomores += "\n- " + "**" +str(member.display_name) +"**" + " is "+ str(firstname) +" "+ str(lastname)
+    await loading.edit(content="Loading Juniors...")
+    for member in junior.members:
+        if member in Guestrole.members:
+            Juniors += "\n- " + "**" +str(member.display_name) +"**" + " is a Guest"
         else:
-            studentid = str(userid['student_id'])
-            with open('eggs.csv', newline='') as csvfile:
-                csvReader = csv.reader(csvfile, delimiter=',')
-                for row in csvReader:
-                    thestudent_id = ''.join(filter(lambda x: x.isdigit(), row[30]))
-                    if str(thestudent_id) in row[30] and str(thestudent_id) == str(studentid):
-                        firstname = row[1]
-                        lastname = row[3]
-                        juniors += "\n- " + firstname +" "+ lastname
-    for member in senior.members not in Guestrole.members:
-        userid = member.id
-        student = user_col.find_one({'user_id': str(member.id)})
-        if student is None:
-            await ctx.send("ERROR: Member File Missing for + "+  member.mention  +". Aborting Senior count")
+            userid = member.id
+            student = user_col.find_one({'user_id': str(member.id)})
+            if student is None:
+                await ctx.send("ERROR: Member File Missing for + "+  member.mention  +". Aborting Junior count")
+                break
+            else:
+                studentid = str(student['student_id'])
+                with open('eggs.csv', newline='') as csvfile:
+                    csvReader = csv.reader(csvfile, delimiter=',')
+                    for row in csvReader:
+                        thestudent_id = ''.join(filter(lambda x: x.isdigit(), row[30]))
+                        if str(thestudent_id) in row[30] and str(thestudent_id) == str(studentid):
+                            firstname = row[1]
+                            lastname = row[3]
+                            Juniors += "\n- " + "**" +str(member.display_name) +"**" + " is "+ str(firstname) +" "+ str(lastname)
+    await loading.edit(content="Loading Seniors...")
+    for member in senior.members:
+        if member in Guestrole.members:
+            seniors += "\n- " + "**" +str(member.display_name) +"**" + " is a Guest"
         else:
-            studentid = str(userid['student_id'])
-            with open('eggs.csv', newline='') as csvfile:
-                csvReader = csv.reader(csvfile, delimiter=',')
-                for row in csvReader:
-                    thestudent_id = ''.join(filter(lambda x: x.isdigit(), row[30]))
-                    if str(thestudent_id) in row[30] and str(thestudent_id) == str(studentid):
-                        firstname = row[1]
-                        lastname = row[3]
-                        seniors += "\n- " + firstname +" "+ lastname
-    for member in alumni.members not in Guestrole.members:
-        userid = member.id
-        student = user_col.find_one({'user_id': str(member.id)})
-        if student is None:
-            await ctx.send("ERROR: Member File Missing for + "+  member.mention  +". Aborting Alumni count")
+            userid = member.id
+            student = user_col.find_one({'user_id': str(member.id)})
+            if student is None:
+                await ctx.send("ERROR: Member File Missing for + "+  member.mention  +". Aborting Senior count")
+            else:
+                studentid = str(student['student_id'])
+                with open('eggs.csv', newline='') as csvfile:
+                    csvReader = csv.reader(csvfile, delimiter=',')
+                    for row in csvReader:
+                        thestudent_id = ''.join(filter(lambda x: x.isdigit(), row[30]))
+                        if str(thestudent_id) in row[30] and str(thestudent_id) == str(studentid):
+                            firstname = row[1]
+                            lastname = row[3]
+                            seniors += "\n- " + "**" +str(member.display_name) +"**" + " is "+ str(firstname) +" "+ str(lastname)
+    await loading.edit(content="Loading Alumni...")
+    for member in alumni.members:
+        if member in Guestrole.members:
+            TheAlumni += "\n- " + "**" +str(member.display_name) +"**" + " is a Guest"
         else:
-            studentid = str(userid['student_id'])
-            with open('eggs.csv', newline='') as csvfile:
-                csvReader = csv.reader(csvfile, delimiter=',')
-                for row in csvReader:
-                    thestudent_id = ''.join(filter(lambda x: x.isdigit(), row[30]))
-                    if str(thestudent_id) in row[30] and str(thestudent_id) == str(studentid):
-                        firstname = row[1]
-                        lastname = row[3]
-                        TheAlumni += "\n- " + firstname +" "+ lastname
-    await ctx.send(TheAlumni)
-    await ctx.send(Seniors)
-    await ctx.send(Juniors)
-    await ctx.send(Sophomores)
-    await ctx.send(LeFreshmen)
-    await ctx.send(Middleschoolers)
+            userid = member.id
+            student = user_col.find_one({'user_id': str(member.id)})
+            if student is None:
+                await ctx.send("ERROR: Member File Missing for + "+  member.mention  +". Aborting Alumni count")
+            else:
+                studentid = str(student['student_id'])
+                with open('eggs.csv', newline='') as csvfile:
+                    csvReader = csv.reader(csvfile, delimiter=',')
+                    for row in csvReader:
+                        thestudent_id = ''.join(filter(lambda x: x.isdigit(), row[30]))
+                        if str(thestudent_id) in row[30] and str(thestudent_id) == str(studentid):
+                            firstname = row[1]
+                            lastname = row[3]
+                            TheAlumni += "\n- " + "**" +str(member.display_name) +"**" + " is "+ str(firstname) +" "+ str(lastname)
+    await loading.delete()
+    AlumniEmbed = MakeEmbed(title = "**Alumni**", description= TheAlumni)
+    await ctx.send(embed=AlumniEmbed)
+    SeniorEmbed = MakeEmbed(title="**Seniors**", description=seniors)
+    await ctx.send(embed=SeniorEmbed)
+    JuniorEmbed = MakeEmbed(title="**Juniors**", description=Juniors)
+    await ctx.send(embed=JuniorEmbed)
+    SophEmbed = MakeEmbed(title="**Sophomores**", description=Sophomores)
+    await ctx.send(embed=SophEmbed)
+    FreshEmbed = MakeEmbed(title="**Freshmen**", description=LeFreshmen)
+    await ctx.send(embed=FreshEmbed)
+    MehEmbed = MakeEmbed(title="**Middleschoolers**", description=middleschoolers)
+    await ctx.send(embed=MehEmbed)
 
 @bot.command(name='identify')
 async def identify(ctx, name: discord.Member=None):
