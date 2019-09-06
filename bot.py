@@ -668,6 +668,16 @@ async def purge_all(ctx):
         await msg.edit(content="you can't do that lmao")
         return
 
+async def VerifyCooldown(member):
+    await asyncio.sleep(60*60*24)
+    doc = user_col.find_one({'user_id': str(member.id)})
+    if doc['verified': True]:
+        return
+    else:
+        member.send("You have been kicked from setup due to inactivity, please rejoin to continue: " + config.invite_url)
+        member.kick()
+        return
+
 
 @bot.event
 async def on_ready():
@@ -711,6 +721,7 @@ async def select_middle_school(member, channel):
     if not check_for_doc("user_id", str(member.id)):
         user_col.insert_one(make_doc(member.name, member.id, their_code, 'Middle School', None, False))
         await get_student_id(member, channel)
+        await VerifyCooldown(member)
 
         # send code to email?
 
@@ -723,7 +734,6 @@ async def get_student_id(member, channel):
         if idmsg.author.id is member.id:
             student_id6 = ''.join(filter(lambda x: x.isdigit(), idmsg.content))
             try_for_id = user_col.find_one({'student_id': str(student_id6)})
-            print("Test")
             if try_for_id is not None:
                 await channel.send('ERROR: That ID is already In use. Please use another one. Contact Larvey#0001 if this *is* your student ID.')
                 continue
@@ -854,6 +864,7 @@ async def select_high_school(member, channel):
         user_col.insert_one(make_doc(member.name, member.id, their_code, gradeselect, None, False))
         await log("saved.")
         await get_student_id(member, channel)
+        await VerifyCooldown(member)
 
         # send code to email?
 
@@ -1147,13 +1158,13 @@ async def identify(ctx, name: discord.Member=None):
 
 async def purge_unverified():
     print("Initiated Inactive Loop")
-    while not bot.is_closed():
-        await asyncio.sleep(60*60*24)
+    while True:
+        await asyncio.sleep(60*60*12)
         accounts_deleted = 0
         to_delete = user_col.find({'verified':False, 'student_id':None})
         for doc in to_delete:
             a_member = discord.utils.get(bot.get_all_members(), id=int(doc['user_id']))
-            if a_member is not None and a_member.guild.id is config.guild_id:
+            if a_member is not None:
                 a_member.send('you have been kicked from the server for inactivity during setup. please re-join if you want to complete the setup: \n\n'+config.invite_url)
                 a_member.kick()
                 accounts_deleted = accounts_deleted+1
@@ -1161,6 +1172,23 @@ async def purge_unverified():
 
         await log("deleted {} unverified users".format(str(accounts_deleted)))
 
+
+@bot.command()
+async def purge_inactive(ctx):
+    if ctx.author.id in owner_ids:
+        accounts_deleted = 0
+        to_delete = user_col.find({'verified':False, 'student_id':None})
+        for doc in to_delete:
+            a_member = discord.utils.get(bot.get_all_members(), id=int(doc['user_id']))
+            if a_member is not None:
+                a_member.send('you have been kicked from the server for inactivity during setup. please re-join if you want to complete the setup: \n\n'+config.invite_url)
+                a_member.kick()
+                accounts_deleted = accounts_deleted+1
+                user_col.delete_many({'user_id': str(a_member.id)})
+
+        await log("deleted {} unverified users".format(str(accounts_deleted)))
+        embed = MakeEmbed(title="Purge", description="Purged {} unverified inactive users".format(str(accounts_deleted)), doFooter=True)
+        ctx.send(embed=embed)
 
 @bot.event
 async def on_member_join(member):
