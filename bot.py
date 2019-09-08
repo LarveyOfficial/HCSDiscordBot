@@ -653,21 +653,6 @@ async def ping(ctx):
     await ctx.send(embed=embed)
 
 
-@bot.command()
-async def purge_all(ctx):
-    msg = await ctx.send('checking user...')
-    if ctx.author.id in owner_ids:
-        await log('owner requested purge of database')
-        await log('purging...')
-        await msg.edit(content='purging...')
-        user_col.delete_many({})
-        await msg.edit(content='database purged!')
-        print('database purged')
-        return
-    else:
-        print('user requested purge of database: '+ctx.author.name+'\nbut was denied.')
-        await msg.edit(content="you can't do that lmao")
-        return
 
 async def VerifyCooldown(member):
     await asyncio.sleep(60*60*24)
@@ -1157,39 +1142,6 @@ async def identify(ctx, name: discord.Member=None):
             nouser=MakeEmbed(title="ERROR", description="User does not Exist.", color=discord.Color.dark_red(), doFooter=True)
             ctx.send(embed=nouser)
 
-async def purge_unverified():
-    print("Initiated Inactive Loop")
-    while True:
-        await asyncio.sleep(60*60*12)
-        accounts_deleted = 0
-        to_delete = user_col.find({'verified':False, 'student_id':None})
-        for doc in to_delete:
-            a_member = discord.utils.get(bot.get_all_members(), id=int(doc['user_id']))
-            if a_member is not None:
-                a_member.send('you have been kicked from the server for inactivity during setup. please re-join if you want to complete the setup: \n\n'+config.invite_url)
-                a_member.kick()
-                accounts_deleted = accounts_deleted+1
-                user_col.delete_many({'user_id': str(a_member.id)})
-
-        await log("deleted {} unverified users".format(str(accounts_deleted)))
-
-
-@bot.command()
-async def purge_inactive(ctx):
-    if ctx.author.id in owner_ids:
-        accounts_deleted = 0
-        to_delete = user_col.find({'verified':False, 'student_id':None})
-        for doc in to_delete:
-            a_member = discord.utils.get(bot.get_all_members(), id=int(doc['user_id']))
-            if a_member is not None:
-                a_member.send('you have been kicked from the server for inactivity during setup. please re-join if you want to complete the setup: \n\n'+config.invite_url)
-                a_member.kick()
-                accounts_deleted = accounts_deleted+1
-                user_col.delete_many({'user_id': str(a_member.id)})
-
-        await log("deleted {} unverified users".format(str(accounts_deleted)))
-        embed = MakeEmbed(title="Purge", description="Purged {} unverified inactive users".format(str(accounts_deleted)), doFooter=True)
-        ctx.send(embed=embed)
 
 @bot.event
 async def on_member_join(member):
@@ -1199,5 +1151,4 @@ async def on_member_join(member):
         await playerjoin(member)
 
 
-bot.loop.create_task(purge_unverified())
 bot.run(config.TOKEN)
