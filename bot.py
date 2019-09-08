@@ -13,7 +13,7 @@ version = "Release 1.2.1"
 bot.remove_command('help')
 print("Loading....")
 owner_ids=[245653078794174465]
-admin_ids=[339757297247191041, 245653078794174465, 263376129686110208, 334866539507351565, 373536367181037568]
+admin_ids=[339757297247191041, 245653078794174465, 263376129686110208, 373536367181037568]
 eventcoordinators=[467515585270513674, 245653078794174465]
 role_list = ['band', 'nintendoswitch', 'minecraft', 'bedwars', 'communist', 'art', 'languages', 'gamer', 'ping']
 
