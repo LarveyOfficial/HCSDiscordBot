@@ -13,6 +13,7 @@ version = "Release 1.2.1"
 bot.remove_command('help')
 print("Loading....")
 owner_ids=[245653078794174465]
+admin_ids=[339757297247191041, 245653078794174465, 263376129686110208, 334866539507351565, 373536367181037568]
 eventcoordinators=[467515585270513674, 245653078794174465]
 role_list = ['band', 'nintendoswitch', 'minecraft', 'bedwars', 'communist', 'art', 'languages', 'gamer', 'ping']
 
@@ -105,7 +106,7 @@ def check_for_doc(check_key, check_val, check_key2=None, check_val2=None):
 
 @bot.command(name='Upgrade')
 async def Upgrade(ctx, name: discord.Member=None):
-    if ctx.author.id in owner_ids:
+    if ctx.author.id in admin_ids:
         if name is None:
             embed=MakeEmbed(title="Upgrade", description="Please Specify Which user to Upgrade", doFooter=True)
             await ctx.send(embed=embed)
@@ -176,7 +177,7 @@ async def Upgrade(ctx, name: discord.Member=None):
 
 @bot.command(name='Downgrade')
 async def Downgrade(ctx, name: discord.Member=None):
-    if ctx.author.id in owner_ids:
+    if ctx.author.id in admin_ids:
         if name is None:
             embed=MakeEmbed(title="Downgrade", description="Please Specify Which user to Downgrade", doFooter=True)
             await ctx.send(embed=embed)
