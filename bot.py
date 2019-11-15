@@ -1,6 +1,6 @@
 from __future__ import print_function
 from discord.ext import commands
-import discord, time, asyncio, pymongo, string, random, csv, smtplib
+import discord, time, asyncio, pymongo, string, random, csv, smtplib, requests
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 import datetime
@@ -103,6 +103,49 @@ def check_for_doc(check_key, check_val, check_key2=None, check_val2=None):
             return True
         else:
             return False
+
+@bot.command()
+async def weather(ctx):
+    url = 'http://api.openweathermap.org/data/2.5/weather?lat=42.63&lon=-83.98&appid=2aed60299013fab6b2eadc5e70cb92fa&units=imperial'
+    res = requests.get(url)
+
+    data = res.json()
+
+    temp = data['main']['temp']
+    maxTemp = data['main']['temp_max']
+    minTemp = data['main']['temp_min']
+    wind_speed = data['wind']['speed']
+
+    description = data['weather'][0]['main']
+    icon = data['weather'][0]['icon']
+
+    if icon = '01d':
+        icon = ':sunny:'
+    elif icon = '02d':
+        icon = ':partly_sunny:'
+    elif icon = '03d' or '03n':
+        icon = ':white_sun_cloud:'
+    elif icon = '04d' or '04n':
+        icon = ':cloud:'
+    elif icon = '09d' or '09n':
+        icon = ':cloud_rain:'
+    elif icon = '10d':
+        icon = ':white_sun_rain_cloud:'
+    elif icon = '11d' or '11n':
+        icon = ':thunder_cloud_rain:'
+    elif icon = '13d' or '13n':
+        icon = ':cloud_snow:'
+    elif icon = '50d' or '50n':
+        icon = ':fog:'
+#Night Time
+    elif icon = '01n':
+        icon = ':full_moon:'
+    elif icon = '02n':
+        icon = ':full_moon: :cloud:'
+    elif icon = '10n':
+        icon = ':cloud_rain:'
+
+    await ctx.send("The weather in Hartland, MI is: \n" + "Description: " + description + icon + "\nCurrent Temp: " + temp + "\nMax Temp Today: " + maxTemp + "\nLow Temp Today: " + minTemp + "\nWind Speed Today: " + wind_speed)
 
 @bot.command(name='Upgrade')
 async def Upgrade(ctx, name: discord.Member=None):
