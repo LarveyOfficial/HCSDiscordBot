@@ -115,38 +115,47 @@ async def weather(ctx):
     maxTemp = data['main']['temp_max']
     minTemp = data['main']['temp_min']
     wind_speed = data['wind']['speed']
-
     description = data['weather'][0]['main']
     icon = data['weather'][0]['icon']
 
-    if icon = '01d':
+    if str(icon) == '01d':
         icon = ':sunny:'
-    elif icon = '02d':
+    elif str(icon) == '02d':
         icon = ':partly_sunny:'
-    elif icon = '03d' or '03n':
+    elif str(icon) == '03d':
         icon = ':white_sun_cloud:'
-    elif icon = '04d' or '04n':
+    elif str(icon) == '04d':
         icon = ':cloud:'
-    elif icon = '09d' or '09n':
+    elif str(icon) == '09d':
         icon = ':cloud_rain:'
-    elif icon = '10d':
+    elif str(icon) == '10d':
         icon = ':white_sun_rain_cloud:'
-    elif icon = '11d' or '11n':
+    elif str(icon) == '11d':
         icon = ':thunder_cloud_rain:'
-    elif icon = '13d' or '13n':
+    elif str(icon) == '13d':
         icon = ':cloud_snow:'
-    elif icon = '50d' or '50n':
+    elif str(icon) == '50d':
         icon = ':fog:'
-#Night Time
-    elif icon = '01n':
+    elif str(icon) == '01n':
         icon = ':full_moon:'
-    elif icon = '02n':
+    elif str(icon) == '02n':
         icon = ':full_moon: :cloud:'
-    elif icon = '10n':
+    elif str(icon) == '10n':
         icon = ':cloud_rain:'
-
-    await ctx.send("The weather in Hartland, MI is: \n" + "Description: " + description + icon + "\nCurrent Temp: " + temp + "\nMax Temp Today: " + maxTemp + "\nLow Temp Today: " + minTemp + "\nWind Speed Today: " + wind_speed)
-
+    elif str(icon) == '03n':
+        icon = ':white_sun_cloud:'
+    elif str(icon) == '04n':
+        icon = ':cloud:'
+    elif str(icon) == '09n':
+        icon = ':cloud_rain:'
+    elif str(icon) == '11n':
+        icon = ':thunder_cloud_rain:'
+    elif str(icon) == '13n':
+        icon = ':cloud_snow:'
+    elif str(icon) == '50n':
+        icon = ':fog:'
+    embed = MakeEmbed(title= "The Weather", description='The weather in Hartland, MI is: \n**Description**: {} {} \n**Temperature**: {}°F \n**Max Temperature**: {}°F \n**Low Temperature**: {}°F \n**Wind Speed**: {}mph'.format(description, icon, temp, maxTemp, minTemp, wind_speed), doFooter = True)
+    await ctx.send(embed = embed)
 @bot.command(name='Upgrade')
 async def Upgrade(ctx, name: discord.Member=None):
     if ctx.author.id in admin_ids:
@@ -643,7 +652,7 @@ async def close(ctx):
 @bot.group()
 async def help(ctx):
     if ctx.invoked_subcommand is None:
-        embed = MakeEmbed(title="Help", description="The following commands can be used by anyone:\n-role\n-rmrole\n-ping\n-ticket\n-identify\n-identifyall\n-event\n-status\n-help <command>",doFooter=True)
+        embed = MakeEmbed(title="Help", description="The following commands can be used by anyone:\n-role\n-rmrole\n-ping\n-ticket\n-identify\n-identifyall\n-event\n-status\n-weather\n-help <command>",doFooter=True)
         await ctx.send(embed=embed)
 
 
@@ -688,6 +697,11 @@ async def event(ctx):
 @help.command()
 async def status(ctx):
     embed = MakeEmbed(title="Help - Status", description="$status - To amount of members, and bot status", doFooter=True)
+    await ctx.send(embed=embed)
+
+@help.command()
+async def weather(ctx):
+    embed = MakeEmbed(title="Help - Weather", description="$weather - To Check Hartland's Current Weather", doFooter=True)
     await ctx.send(embed=embed)
 
 @bot.command()
