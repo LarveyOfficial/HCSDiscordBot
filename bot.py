@@ -137,9 +137,9 @@ async def weather(ctx):
     elif str(icon) == '50d':
         icon = ':fog:'
     elif str(icon) == '01n':
-        icon = ':full_moon:'
+        icon = ':last_quarter_moon_with_face: '
     elif str(icon) == '02n':
-        icon = ':full_moon: :cloud:'
+        icon = ':last_quarter_moon_with_face:  :cloud:'
     elif str(icon) == '10n':
         icon = ':cloud_rain:'
     elif str(icon) == '03n':
@@ -154,6 +154,8 @@ async def weather(ctx):
         icon = ':cloud_snow:'
     elif str(icon) == '50n':
         icon = ':fog:'
+    if str(description) == "Clear" and icon = ":sunny:":
+        description = "Sunny"
     embed = MakeEmbed(title= "The Weather", description='The weather in Hartland, MI is: \n**Description**: {} {} \n**Temperature**: {}°F \n**Max Temperature**: {}°F \n**Low Temperature**: {}°F \n**Wind Speed**: {}mph'.format(description, icon, temp, maxTemp, minTemp, wind_speed), doFooter = True)
     await ctx.send(embed = embed)
 @bot.command(name='Upgrade')
