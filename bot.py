@@ -109,13 +109,13 @@ async def weather(ctx):
     url = 'http://api.openweathermap.org/data/2.5/weather?lat=42.63&lon=-83.98&appid=2aed60299013fab6b2eadc5e70cb92fa&units=imperial'
     urlMetric = 'http://api.openweathermap.org/data/2.5/weather?lat=42.63&lon=-83.98&appid=2aed60299013fab6b2eadc5e70cb92fa&units=metric'
     res = requests.get(url)
-    resMetric = reuests.get(urlMetric)
+    resMetric = requests.get(urlMetric)
 
     data = res.json()
     dataMetric = resMetric.json()
 
     temp = data['main']['temp']
-    tempMetric = datametric['main']['temp']
+    tempMetric = dataMetric['main']['temp']
     maxTemp = data['main']['temp_max']
     maxTempMetric = dataMetric['main']['temp_max']
     minTemp = data['main']['temp_min']
