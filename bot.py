@@ -9,7 +9,7 @@ if __name__ == '__main__':
 
 
 bot = commands.Bot(command_prefix='$', case_insensitive=True)
-version = "Release 1.2.1"
+version = "Release 1.5.3"
 bot.remove_command('help')
 print("Loading....")
 owner_ids=[245653078794174465]
@@ -580,9 +580,9 @@ async def ticket(ctx, *, name:str = None):
         await log(ctx.author.name + "Needs A Ticket..")
         ticketembed = MakeEmbed(title="Ticket",description="Welcome " + ctx.author.mention + " This is your Ticket! ", doFooter=True)
         await ticketchannel.send(embed=ticketembed)
-        adminmention = await ctx.send("<@&543060916086767617>")
+        adminmention = await ticketchannel.send("<@&543060916086767617>")
         adminmention.delete()
-        usermention = await ctx.send(ctx.author.mention)
+        usermention = await ticketchannel.send(ctx.author.mention)
         usermention.delete()
 
     else:
