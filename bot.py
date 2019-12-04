@@ -107,13 +107,19 @@ def check_for_doc(check_key, check_val, check_key2=None, check_val2=None):
 @bot.command()
 async def weather(ctx):
     url = 'http://api.openweathermap.org/data/2.5/weather?lat=42.63&lon=-83.98&appid=2aed60299013fab6b2eadc5e70cb92fa&units=imperial'
+    urlMetric = 'http://api.openweathermap.org/data/2.5/weather?lat=42.63&lon=-83.98&appid=2aed60299013fab6b2eadc5e70cb92fa&units=metric'
     res = requests.get(url)
+    resMetric = reuests.get(urlMetric)
 
     data = res.json()
+    dataMetric = resMetric.json()
 
     temp = data['main']['temp']
+    tempMetric = datametric['main']['temp']
     maxTemp = data['main']['temp_max']
+    maxTempMetric = dataMetric['main']['temp_max']
     minTemp = data['main']['temp_min']
+    minTempMetric = dataMetric['main']['temp_min']
     wind_speed = data['wind']['speed']
     description = data['weather'][0]['main']
     icon = data['weather'][0]['icon']
@@ -156,7 +162,7 @@ async def weather(ctx):
         icon = ':fog:'
     if str(description) == "Clear" and icon == ":sunny:":
         description = "Sunny"
-    embed = MakeEmbed(title= "The Weather", description='The weather in Hartland, MI is: \n**Description**: {} {} \n**Temperature**: {}°F \n**Max Temperature**: {}°F \n**Low Temperature**: {}°F \n**Wind Speed**: {}mph'.format(description, icon, temp, maxTemp, minTemp, wind_speed), doFooter = True)
+    embed = MakeEmbed(title= "The Weather", description='The weather in Hartland, MI is: \n**Description**: {} {} \n**Temperature**: {}°F / {}°C \n**Max Temperature**: {}°F / {}°C \n**Low Temperature**: {}°F / {}°C \n**Wind Speed**: {}mph'.format(description, icon, temp, tempMetric, maxTemp, maxTempMetric, minTemp, minTempMetric, wind_speed), doFooter = True)
     await ctx.send(embed = embed)
 @bot.command(name='Upgrade')
 async def Upgrade(ctx, name: discord.Member=None):
